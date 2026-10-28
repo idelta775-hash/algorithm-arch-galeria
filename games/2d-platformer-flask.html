@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>2D Platformer Game</title>
+
+<style>
+
+body{margin:0;background:#101d3b;color:white;font-family:Arial;text-align:center}
+
+.wrap{max-width:900px;margin:auto;padding:12px}
+
+canvas{width:100%;background:#52b9f9;border:3px solid #14294b;border-radius:12px}
+
+button{padding:12px 20px;background:#102b4b;color:white;border:1px solid #5682b5;border-radius:8px}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="wrap">
+
+<h2> <span id="lives">3</span> &nbsp; 2D PLATFORMER
+
+&nbsp;  <span id="score">0</span></h2>
+
+<canvas id="game" width="850" height="480"></canvas>
+
+<p>Move: ← → &nbsp; Jump: SPACE or ↑</p>
+
+<button id="left"> LEFT</button>
+
+<button id="jump"> JUMP</button>
+
+<button id="right">RIGHT </button>
+
+</div>
+
+<script>
+
+const c=document.getElementById('game'),g=c.getContext('2d');
+
+let p={x:70,y:350,vx:0,vy:0,ground:false};
+
+let keys={},score=0,lives=3,camera=0;
+
+const platforms=[
+
+{x:0,y:420,w:350},{x:420,y:360,w:150},
+
+{x:640,y:300,w:160},{x:880,y:400,w:250},
+
+{x:1200,y:350,w:200},{x:1460,y:420,w:500}
+
+];
+
+let coins=Array.from({length:15},(_,i)=>({
+
+x:180+i*110,y:platforms[i%platforms.length].y-35,taken:false
+
+}));
+
+function press(id,key){
+
+let b=document.getElementById(id);
+
+b.onpointerdown=e=>{e.preventDefault();keys[key]=true};
+
+b.onpointerup=b.onpointerleave=b.onpointercancel=()=>keys[key]=false;
+
+}
+
+press('left','ArrowLeft');press('right','ArrowRight');press('jump','ArrowUp');
+
+onkeydown=e=>{keys[e.key]=true;if(e.key===' ')e.preventDefault()};
+
+onkeyup=e=>keys[e.key]=false;
+
+
+
+function frame(){
+
+g.clearRect(0,0,c.width,c.height);
+
+g.fillStyle='#8bd8ff';g.fillRect(0,0,850,480);
+
+g.fillStyle='#70b9e9';
+
+for(let i=0;i<8;i++){
+
+g.beginPath();g.arc(i*150+30-camera*.2,280,70,Math.PI,0);g.fill();
+
+}
+
+camera=Math.max(0,p.x-250);
+
+g.save();g.translate(-camera,0);
+
+
+
+platforms.forEach(a=>{
+
+g.fillStyle='#75472a';g.fillRect(a.x,a.y,a.w,60);
+
+g.fillStyle='#48c94b';g.fillRect(a.x,a.y,a.w,12);
+
+g.fillStyle='#39953a';
+
+for(let x=a.x;x<a.x+a.w;x+=22)g.fillRect(x,a.y+12,4,8);
+
+});
+
+
+
+coins.forEach(a=>{
+
+if(!a.taken){
+
+g.fillStyle='#ffcc24';g.beginPath();
+
+g.arc(a.x,a.y,10,0,Math.PI*2);g.fill();
+
+g.strokeStyle='#fff39c';g.stroke();
+
+if(Math.abs(p.x-a.x)<23&&Math.abs(p.y+15-a.y)<25){
+
+a.taken=true;score++;
+
+document.getElementById('score').textContent=score;
+
+}
+
+}
+
+});
+
+
+
+p.vx=(keys.ArrowRight||keys.d?4:0)-(keys.ArrowLeft||keys.a?4:0);
+
+if((keys.ArrowUp||keys[' ']||keys.w)&&p.ground){
+
+p.vy=-12;p.ground=false;
+
+}
+
+p.vy+=.55;p.x+=p.vx;p.y+=p.vy;p.ground=false;
+
+
+
+platforms.forEach(a=>{
+
+if(p.x+20>a.x&&p.x<a.x+a.w&&p.y+30>=a.y&&
+
+p.y+30-p.vy<=a.y&&p.vy>=0){
+
+p.y=a.y-30;p.vy=0;p.ground=true;
+
+}
+
+});
+
+
+
+g.fillStyle='#e43d45';g.fillRect(p.x,p.y,24,30);
+
+g.fillStyle='white';g.fillRect(p.x+14,p.y+6,5,5);
+
+g.restore();
+
+
+
+if(p.y>500){
+
+lives--;document.getElementById('lives').textContent=lives;
+
+p.x=Math.max(camera,70);p.y=250;p.vy=0;
+
+if(lives<=0){alert('Game Over! Coins: '+score);location.reload();}
+
+}
+
+requestAnimationFrame(frame);
+
+}
+
+frame();
+
+</script>
+
+</body>
+
+</html>

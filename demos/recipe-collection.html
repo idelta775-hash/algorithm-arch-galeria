@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>Recipe Collection</title>
+
+<style>
+
+:root{--orange:#ff8b38;--ink:#172b27;--cream:#fffaf3;--muted:#718079}
+
+*{box-sizing:border-box}
+
+body{margin:0;background:var(--cream);color:var(--ink);
+
+font-family:Arial,sans-serif}
+
+button,input{font:inherit}
+
+button{cursor:pointer}
+
+.hero{background:linear-gradient(115deg,#182f29,#315347);
+
+color:white;padding:24px max(20px,calc((100% - 1150px)/2)) 45px}
+
+.nav{display:flex;align-items:center;justify-content:space-between;gap:14px}
+
+.logo{font-size:25px;font-weight:900;letter-spacing:-1px}
+
+.logo span{color:#ffb15d}
+
+.nav button{border:1px solid #779087;background:#ffffff10;color:white;
+
+border-radius:9px;padding:10px 15px}
+
+.hero-content{max-width:1150px;margin:38px auto 0}
+
+.eyebrow{color:#ffbe7c;font-weight:bold;letter-spacing:3px;font-size:12px}
+
+.hero h1{font-size:clamp(35px,6vw,62px);line-height:1.02;
+
+max-width:700px;margin:13px 0}
+
+.hero h1 span{color:#ffb15d}
+
+.hero p{max-width:560px;line-height:1.7;color:#d3e3d9}
+
+.search{display:flex;gap:8px;background:white;padding:7px;border-radius:12px;
+
+max-width:650px;margin-top:24px}
+
+.search input{min-width:0;flex:1;border:0;outline:0;padding:13px;color:#172b27}
+
+.search button{border:0;background:var(--orange);color:#24180f;
+
+border-radius:8px;padding:12px 20px;font-weight:bold}
+
+main{max-width:1150px;margin:30px auto;padding:0 18px}
+
+.heading{display:flex;align-items:end;justify-content:space-between;gap:12px}
+
+.heading h2{margin:0;font-size:27px}
+
+.heading p{color:var(--muted);margin:7px 0 0}
+
+.filters{display:flex;gap:9px;flex-wrap:wrap;margin:22px 0}
+
+.filter{padding:10px 16px;border:1px solid #e0e5dc;border-radius:30px;
+
+background:white;color:#31483e;font-weight:bold}
+
+.filter.active{background:#213e31;color:white;border-color:#213e31}
+
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+
+.card{background:white;border:1px solid #ece8de;border-radius:16px;
+
+overflow:hidden;box-shadow:0 5px 20px #2c382010;transition:.2s}
+
+.card:hover{transform:translateY(-4px);box-shadow:0 12px 30px #2c382018}
+
+.photo{position:relative;height:205px;background:#dce8da}
+
+.photo img{width:100%;height:100%;object-fit:cover;display:block}
+
+.fav{position:absolute;right:12px;top:12px;width:40px;height:40px;
+
+border:0;border-radius:50%;background:white;color:#394b40;font-size:22px;
+
+box-shadow:0 3px 12px #0002}
+
+.fav.on{color:#ed4d54}
+
+.card-body{padding:17px}
+
+.tag{display:inline-block;padding:5px 9px;border-radius:20px;
+
+background:#fff0df;color:#a84f16;font-size:11px;font-weight:bold}
+
+.card h3{font-size:20px;margin:12px 0 7px}
+
+.description{font-size:14px;color:var(--muted);line-height:1.5;min-height:42px}
+
+.meta{display:flex;justify-content:space-between;gap:8px;
+
+border-top:1px solid #eeeae2;margin-top:15px;padding-top:13px;
+
+font-size:13px;color:#53645b}
+
+.view{margin-top:15px;width:100%;border:0;border-radius:9px;
+
+background:#213e31;color:white;padding:12px;font-weight:bold}
+
+.view:hover{background:#315b46}
+
+.empty{grid-column:1/-1;text-align:center;padding:50px 15px;
+
+background:white;border-radius:15px;color:var(--muted)}
+
+footer{margin-top:50px;padding:30px 15px;text-align:center;
+
+background:#182f29;color:#d6e4dc}
+
+.modal{display:none;position:fixed;inset:0;z-index:10;
+
+background:#07130ed9;overflow-y:auto;padding:25px}
+
+.modal.open{display:flex;align-items:flex-start;justify-content:center}
+
+.dialog{width:min(850px,100%);margin:auto;background:#fffaf3;
+
+border-radius:18px;overflow:hidden;position:relative}
+
+.dialog img{width:100%;height:270px;object-fit:cover;display:block}
+
+.close{position:absolute;top:12px;right:12px;width:42px;height:42px;
+
+border:0;border-radius:50%;font-size:24px;background:white;color:#172b27}
+
+.details{padding:24px}
+
+.details h2{font-size:30px;margin:8px 0}
+
+.details p{line-height:1.6;color:#5d6a61}
+
+.columns{display:grid;grid-template-columns:1fr 1.5fr;gap:25px}
+
+.columns h3{border-bottom:2px solid #f0c28c;padding-bottom:10px}
+
+.columns li{padding:5px 0;line-height:1.5}
+
+@media(max-width:800px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+
+.hero-content{margin-top:28px}}
+
+@media(max-width:540px){.grid{grid-template-columns:1fr}
+
+.photo{height:230px}.columns{grid-template-columns:1fr}
+
+.nav .nav-sub{display:none}.hero{padding-top:20px}.hero-content{margin-top:25px}
+
+.heading{align-items:start;flex-direction:column}}
+
+</style>
+
+</head>
+
+<body>
+
+<section class="hero">
+
+  <nav class="nav">
+
+    <div class="logo"> Recipe<span>Book</span></div>
+
+    <div class="nav-sub">Discover · Cook · Enjoy</div>
+
+    <button id="favoritesToggle">♡ My Favorites <span id="favCount">0</span></button>
+
+  </nav>
+
+  <div class="hero-content">
+
+    <div class="eyebrow">FRESH IDEAS FOR EVERY KITCHEN</div>
+
+    <h1>Find your next <span>favorite</span> recipe.</h1>
+
+    <p>Explore delicious meals, discover new flavors, and bring something special to your table today.</p>
+
+    <div class="search">
+
+      <input id="search" type="search" placeholder="Search recipes or ingredients..." aria-label="Search recipes">
+
+      <button id="searchBtn">Search</button>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+
+<main>
+
+  <section class="heading">
+
+    <div><h2 id="sectionTitle">Explore Recipes</h2>
+
+    <p id="resultCount">Find something delicious to make today.</p></div>
+
+  </section>
+
+  <div class="filters" id="filters">
+
+    <button class="filter active" data-category="All">All Recipes</button>
+
+    <button class="filter" data-category="Breakfast"> Breakfast</button>
+
+    <button class="filter" data-category="Lunch"> Lunch</button>
+
+    <button class="filter" data-category="Dinner"> Dinner</button>
+
+    <button class="filter" data-category="Dessert"> Dessert</button>
+
+    <button class="filter" data-category="Vegetarian"> Vegetarian</button>
+
+  </div>
+
+  <section class="grid" id="recipes"></section>
+
+</main>
+
+
+
+<footer> RecipeBook · Made for people who love good food.</footer>
+
+
+
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="Recipe details">
+
+  <div class="dialog">
+
+    <button class="close" id="closeModal" aria-label="Close">×</button>
+
+    <img id="detailImage" alt="Recipe photo">
+
+    <div class="details">
+
+      <span class="tag" id="detailCategory"></span>
+
+      <h2 id="detailTitle"></h2>
+
+      <p id="detailDescription"></p>
+
+      <div class="meta">
+
+        <span id="detailTime"></span><span id="detailServings"></span><span id="detailRating"></span>
+
+      </div>
+
+      <div class="columns">
+
+        <div><h3> Ingredients</h3><ul id="ingredients"></ul></div>
+
+        <div><h3> Instructions</h3><ol id="instructions"></ol></div>
+
+      </div>
+
+      <button class="view" id="detailFavorite">♡ Add to Favorites</button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+
+<script>
+
+const recipes=[
+
+{id:1,title:"Avocado Breakfast Toast",category:"Breakfast",time:15,
+
+servings:2,rating:4.9,vegetarian:true,
+
+description:"Creamy avocado, crisp toast and fresh herbs for a bright morning meal.",
+
+image:"https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=900&q=85",
+
+ingredients:["2 slices sourdough bread","1 ripe avocado","1 tsp lemon juice","2 eggs (optional)","Salt and black pepper","Chili flakes and fresh herbs"],
+
+instructions:["Toast the bread until golden and crisp.","Mash the avocado with lemon juice, salt and pepper.","Spread the avocado over each slice.","Add cooked eggs if desired.","Finish with herbs and chili flakes, then serve."]},
+
+{id:2,title:"Garden Fresh Salad",category:"Lunch",time:20,
+
+servings:2,rating:4.8,vegetarian:true,
+
+description:"A colorful bowl of crisp vegetables, creamy dressing and crunchy seeds.",
+
+image:"https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=900&q=85",
+
+ingredients:["4 cups mixed greens","1 cucumber","1 cup cherry tomatoes","1 small red onion","2 tbsp olive oil","1 tbsp lemon juice","Seeds, salt and pepper"],
+
+instructions:["Wash and thoroughly dry the greens.","Slice the cucumber, tomatoes and onion.","Combine the vegetables in a large bowl.","Whisk olive oil, lemon juice, salt and pepper.","Toss the salad with dressing and sprinkle with seeds."]},
+
+{id:3,title:"Creamy Tomato Pasta",category:"Dinner",time:30,
+
+servings:3,rating:4.9,vegetarian:true,
+
+description:"Comforting pasta coated in a silky tomato sauce with garlic and basil.",
+
+image:"https://images.unsplash.com/photo-1473093295043-cdd812d0e601?auto=format&fit=crop&w=900&q=85",
+
+ingredients:["300 g pasta","2 cups crushed tomatoes","3 cloves garlic","2 tbsp olive oil","1/3 cup cream","Fresh basil","Parmesan, salt and pepper"],
+
+instructions:["Cook pasta in salted water according to the package.","Warm olive oil in a pan and cook the minced garlic.","Add tomatoes and simmer for 12 minutes.","Stir in cream, salt and pepper.","Toss with the drained pasta and finish with basil and Parmesan."]},
+
+{id:4,title:"Berry Pancake Stack",category:"Breakfast",time:25,
+
+servings:3,rating:4.7,vegetarian:true,
+
+description:"Fluffy golden pancakes topped with juicy berries and a drizzle of syrup.",
+
+image:"https://images.unsplash.com/photo-1528207776546-365bb710ee93?auto=format&fit=crop&w=900&q=85",
+
+ingredients:["1 cup flour","1 tbsp sugar","1 tsp baking powder","1 egg","3/4 cup milk","1 tbsp melted butter","Mixed berries and syrup"],
+
+instructions:["Mix flour, sugar and baking powder.","Whisk egg, milk and melted butter in another bowl.","Combine wet and dry ingredients without overmixing.","Cook small portions on a lightly greased pan until bubbles appear.","Flip and cook until golden, then serve with berries and syrup."]},
+
+{id:5,title:"Grilled Chicken Bowl",category:"Lunch",time:35,
+
+servings:2,rating:4.8,vegetarian:false,
+
+description:"Tender seasoned chicken with rice, fresh greens and a zesty dressing.",
+
+image:"https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=900&q=85",
+
+ingredients:["2 chicken breasts","2 cups cooked rice","1 cup cucumber","1 cup tomatoes","2 cups lettuce","1 tbsp olive oil","Lemon, paprika, salt and pepper"],
+
+instructions:["Season chicken with oil, lemon, paprika, salt and pepper.","Cook thoroughly in a grill pan, turning once.","Rest the chicken briefly, then slice.","Divide rice, vegetables and lettuce between bowls.","Add chicken and finish with lemon dressing."]},
+
+{id:6,title:"Chocolate Lava Cakes",category:"Dessert",time:28,
+
+servings:4,rating:5.0,vegetarian:true,
+
+description:"Rich chocolate cakes with soft centers, perfect for a special treat.",
+
+image:"https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=900&q=85",
+
+ingredients:["100 g dark chocolate","100 g butter","2 eggs","2 egg yolks","1/4 cup sugar","2 tbsp flour","Butter for ramekins"],
+
+instructions:["Heat the oven to 200°C and butter four ramekins.","Melt chocolate and butter together, then cool slightly.","Whisk eggs, yolks and sugar until thick.","Fold in the chocolate mixture and flour.","Bake for 9–12 minutes until the edges are set but centers remain soft."]},
+
+{id:7,title:"Roasted Vegetable Bowl",category:"Dinner",time:40,
+
+servings:3,rating:4.8,vegetarian:true,
+
+description:"Roasted seasonal vegetables with herbs and a bright lemon dressing.",
+
+image:"https://images.unsplash.com/photo-1511690743698-d9d85f2fbf38?auto=format&fit=crop&w=900&q=85",
+
+ingredients:["1 sweet potato","1 bell pepper","1 zucchini","1 red onion","2 tbsp olive oil","1 tsp mixed herbs","Lemon juice and salt"],
+
+instructions:["Heat the oven to 210°C.","Chop vegetables into similar-sized pieces.","Toss with olive oil, herbs and salt.","Spread on a baking tray and roast for 25–30 minutes.","Finish with lemon juice and serve warm."]},
+
+{id:8,title:"Strawberry Cream Dessert",category:"Dessert",time:20,
+
+servings:4,rating:4.9,vegetarian:true,
+
+description:"Fresh strawberries layered with smooth cream for a simple dessert.",
+
+image:"https://images.unsplash.com/photo-1464349095431-e9a21285b5f3?auto=format&fit=crop&w=900&q=85",
+
+ingredients:["400 g strawberries","1 cup whipping cream","2 tbsp sugar","1 tsp vanilla","Crushed biscuits (optional)"],
+
+instructions:["Wash and slice the strawberries.","Whip the cream with sugar and vanilla until soft peaks form.","Layer strawberries and cream in serving glasses.","Add crushed biscuits if desired.","Chill for 15 minutes before serving."]},
+
+{id:9,title:"Green Power Smoothie",category:"Breakfast",time:10,
+
+servings:1,rating:4.6,vegetarian:true,
+
+description:"A refreshing blend of banana, greens and fruit for a quick start.",
+
+image:"https://images.unsplash.com/photo-1505252585461-04db1eb84625?auto=format&fit=crop&w=900&q=85",
+
+ingredients:["1 banana","1 cup spinach","1/2 cup yogurt","1/2 cup milk","1/2 cup frozen mango","Honey to taste"],
+
+instructions:["Add all ingredients to a blender.","Blend until smooth and creamy.","Add a splash of milk if the smoothie is too thick.","Taste and add honey if desired.","Pour into a glass and enjoy immediately."]},
+
+{id:10,title:"Herb Roasted Potatoes",category:"Lunch",time:45,
+
+servings:4,rating:4.7,vegetarian:true,
+
+description:"Crispy golden potatoes with fragrant herbs and a tender center.",
+
+image:"https://images.unsplash.com/photo-1518977676601-b53f82aba655?auto=format&fit=crop&w=900&q=85",
+
+ingredients:["700 g potatoes","2 tbsp olive oil","2 cloves garlic","1 tsp rosemary","1 tsp thyme","Salt and black pepper"],
+
+instructions:["Heat the oven to 210°C.","Cut potatoes into bite-sized pieces.","Toss with oil, garlic, rosemary, thyme, salt and pepper.","Spread in a single layer on a baking tray.","Roast for 35–45 minutes, turning halfway, until crisp and golden."]}
+
+];
+
+
+
+let category="All",favorites=new Set(),showFavorites=false,searchTerm="";
+
+let selectedRecipe=null;
+
+const $=id=>document.getElementById(id);
+
+
+
+function render(){
+
+  let list=recipes.filter(r=>{
+
+    const matchesCategory=category==="All"||r.category===category||
+
+      (category==="Vegetarian"&&r.vegetarian);
+
+    const matchesSearch=(r.title+" "+r.description+" "+r.ingredients.join(" "))
+
+      .toLowerCase().includes(searchTerm.toLowerCase());
+
+    const matchesFavorite=!showFavorites||favorites.has(r.id);
+
+    return matchesCategory&&matchesSearch&&matchesFavorite;
+
+  });
+
+  $("recipes").innerHTML="";
+
+  $("resultCount").textContent=list.length+" recipes to discover";
+
+  $("sectionTitle").textContent=showFavorites?"My Favorite Recipes":"Explore Recipes";
+
+  $("favCount").textContent=favorites.size;
+
+
+
+  if(!list.length){
+
+    $("recipes").innerHTML='<div class="empty"><h3>No recipes found</h3><p>Try another search or category.</p></div>';
+
+    return;
+
+  }
+
+
+
+  list.forEach(r=>{
+
+    const card=document.createElement("article");
+
+    card.className="card";
+
+    card.innerHTML=`
+
+      <div class="photo">
+
+        <img src="${r.image}" alt="${r.title}" loading="lazy">
+
+        <button class="fav ${favorites.has(r.id)?"on":""}" aria-label="Toggle favorite">${favorites.has(r.id)?"":"♡"}</button>
+
+      </div>
+
+      <div class="card-body">
+
+        <span class="tag">${r.category.toUpperCase()}</span>
+
+        <h3>${r.title}</h3>
+
+        <div class="description">${r.description}</div>
+
+        <div class="meta"><span> ${r.time} min</span><span> ${r.rating.toFixed(1)}</span><span> ${r.servings} servings</span></div>
+
+        <button class="view">VIEW RECIPE →</button>
+
+      </div>`;
+
+    card.querySelector(".fav").onclick=()=>{
+
+      if(favorites.has(r.id))favorites.delete(r.id);
+
+      else favorites.add(r.id);
+
+      render();
+
+    };
+
+    card.querySelector(".view").onclick=()=>openRecipe(r.id);
+
+    card.querySelector("img").onerror=e=>{
+
+      e.target.style.display="none";
+
+      e.target.parentElement.style.background="#dce8da";
+
+    };
+
+    $("recipes").appendChild(card);
+
+  });
+
+}
+
+function openRecipe(id){
+
+  selectedRecipe=recipes.find(r=>r.id===id);
+
+  const r=selectedRecipe;
+
+  $("detailImage").src=r.image;
+
+  $("detailImage").alt=r.title;
+
+  $("detailCategory").textContent=r.category;
+
+  $("detailTitle").textContent=r.title;
+
+  $("detailDescription").textContent=r.description;
+
+  $("detailTime").textContent=" "+r.time+" minutes";
+
+  $("detailServings").textContent=" Serves "+r.servings;
+
+  $("detailRating").textContent=" "+r.rating.toFixed(1);
+
+  $("ingredients").innerHTML="";
+
+  $("instructions").innerHTML="";
+
+  r.ingredients.forEach(item=>{
+
+    const li=document.createElement("li");
+
+    li.textContent=item;$("ingredients").appendChild(li);
+
+  });
+
+  r.instructions.forEach(item=>{
+
+    const li=document.createElement("li");
+
+    li.textContent=item;$("instructions").appendChild(li);
+
+  });
+
+  updateDetailFavorite();
+
+  $("modal").classList.add("open");
+
+  document.body.style.overflow="hidden";
+
+}
+
+function updateDetailFavorite(){
+
+  if(!selectedRecipe)return;
+
+  const on=favorites.has(selectedRecipe.id);
+
+  $("detailFavorite").textContent=on?" Remove from Favorites":"♡ Add to Favorites";
+
+}
+
+function closeModal(){
+
+  $("modal").classList.remove("open");
+
+  document.body.style.overflow="";
+
+}
+
+$("detailFavorite").onclick=()=>{
+
+  if(!selectedRecipe)return;
+
+  if(favorites.has(selectedRecipe.id))favorites.delete(selectedRecipe.id);
+
+  else favorites.add(selectedRecipe.id);
+
+  updateDetailFavorite();render();
+
+};
+
+$("closeModal").onclick=closeModal;
+
+$("modal").onclick=e=>{if(e.target===$("modal"))closeModal()};
+
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal()});
+
+$("search").addEventListener("input",e=>{
+
+  searchTerm=e.target.value.trim();render();
+
+});
+
+$("searchBtn").onclick=()=>{searchTerm=$("search").value.trim();render()};
+
+$("favoritesToggle").onclick=()=>{
+
+  showFavorites=!showFavorites;
+
+  $("favoritesToggle").textContent=showFavorites?"← All Recipes":"♡ My Favorites ";
+
+  $("favoritesToggle").append(" ");
+
+  render();
+
+};
+
+$("filters").addEventListener("click",e=>{
+
+  const btn=e.target.closest("[data-category]");
+
+  if(!btn)return;
+
+  category=btn.dataset.category;
+
+  document.querySelectorAll(".filter").forEach(b=>
+
+    b.classList.toggle("active",b===btn));
+
+  showFavorites=false;
+
+  $("favoritesToggle").textContent="♡ My Favorites";
+
+  render();
+
+});
+
+render();
+
+</script>
+
+</body>
+
+</html>

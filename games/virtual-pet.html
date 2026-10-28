@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>Virtual Pet — Buddy</title>
+
+<style>
+
+:root{--navy:#07152f;--panel:#10285c;--blue:#1678df;--yellow:#ffc928}
+
+*{box-sizing:border-box}
+
+body{margin:0;background:linear-gradient(140deg,#07142e,#142e70);
+
+color:white;font-family:Arial,sans-serif;min-height:100vh;padding:18px}
+
+.app{max-width:1050px;margin:auto}
+
+header{display:flex;justify-content:space-between;align-items:center;gap:12px;
+
+padding:15px 20px;background:#101d4c;border:1px solid #314b91;border-radius:17px}
+
+h1{font-size:clamp(23px,4vw,36px);margin:0}
+
+h1 span{color:var(--yellow)}
+
+button{border:0;border-radius:12px;padding:12px;color:white;font-weight:bold;
+
+font-size:15px;cursor:pointer;transition:.18s;box-shadow:0 4px 0 #0004}
+
+button:hover{filter:brightness(1.15);transform:translateY(-2px)}
+
+button:active{transform:translateY(2px)}
+
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:15px 0}
+
+.stat{background:#0c1d48;border:1px solid #304c91;padding:13px;
+
+border-radius:13px;text-align:center;box-shadow:0 5px 15px #0003}
+
+.stat .emoji{font-size:26px}
+
+.stat small{display:block;color:#c2d4f9;font-weight:bold;margin-top:4px}
+
+.stat strong{font-size:23px;display:block;margin-top:5px}
+
+.layout{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(280px,.8fr);gap:15px}
+
+.scene{position:relative;overflow:hidden;min-height:410px;border-radius:17px;
+
+border:2px solid #344f98;background:linear-gradient(#75d7ef 0 42%,#64bd69 42% 70%,#8c5d3d 70%)}
+
+.window{position:absolute;top:48px;left:25px;width:82px;height:105px;
+
+background:#74d8ff;border:8px solid #e4d4a8;box-shadow:0 3px 7px #0005}
+
+.window:before{content:"";position:absolute;left:29px;height:100%;width:5px;background:#e4d4a8}
+
+.window:after{content:"";position:absolute;top:41px;width:100%;height:5px;background:#e4d4a8}
+
+.shelf{position:absolute;right:18px;top:75px;width:130px;height:13px;
+
+background:#754a2c;border-radius:4px;box-shadow:0 5px 0 #0002}
+
+.plant{position:absolute;right:65px;top:35px;font-size:46px}
+
+.clock{position:absolute;top:54px;left:45%;font-size:42px}
+
+.picture{position:absolute;top:105px;right:25px;width:65px;height:65px;
+
+display:grid;place-items:center;background:#c68a53;border:6px solid #f2d7a4;
+
+font-size:33px}
+
+.rug{position:absolute;bottom:20px;left:8%;width:84%;height:110px;
+
+border-radius:50%;background:radial-gradient(ellipse,#2789d6,#12549c 70%,#103568);
+
+border:5px solid #397dc4}
+
+.pet{position:absolute;bottom:55px;left:50%;transform:translateX(-50%);
+
+font-size:clamp(100px,17vw,170px);filter:drop-shadow(0 8px 5px #0004);
+
+animation:bounce 2s ease-in-out infinite;cursor:pointer;z-index:2}
+
+@keyframes bounce{0%,100%{transform:translate(-50%,0) rotate(-2deg)}
+
+50%{transform:translate(-50%,-9px) rotate(2deg)}}
+
+.pet.sleeping{animation:none;filter:brightness(.75)}
+
+.pet.happy{animation:bounce .45s ease-in-out infinite}
+
+.age{position:absolute;top:18px;left:50%;transform:translateX(-50%);
+
+background:var(--yellow);color:#16213b;padding:9px 20px;border-radius:30px;
+
+font-weight:900;z-index:3}
+
+.name{position:absolute;top:18px;left:20px;z-index:3;font-weight:900;
+
+font-size:clamp(20px,3vw,31px);text-shadow:0 2px 5px #0007}
+
+.right{display:flex;flex-direction:column;gap:12px}
+
+.panel{padding:16px;background:#0c1d48;border:1px solid #304c91;
+
+border-radius:15px;box-shadow:0 5px 15px #0003}
+
+.panel h2{margin:0 0 13px;font-size:19px;color:#dce8ff}
+
+.action-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+
+.action{font-size:16px;min-height:86px}
+
+.action span{display:block;font-size:29px;margin-bottom:5px}
+
+.feed{background:linear-gradient(#35bd5d,#15833b)}
+
+.play{background:linear-gradient(#31a8f7,#1760c5)}
+
+.sleep{background:linear-gradient(#a55df3,#6329ac)}
+
+.bath{background:linear-gradient(#ff9b36,#d95716)}
+
+.status{display:grid;gap:13px}
+
+.status-row{display:grid;grid-template-columns:36px 85px 1fr 43px;
+
+align-items:center;gap:7px;font-size:13px;font-weight:bold}
+
+.status-row .icon{font-size:23px}
+
+.bar{height:15px;border-radius:20px;background:#050d24;overflow:hidden}
+
+.fill{height:100%;width:80%;border-radius:20px;transition:width .3s}
+
+#hungerBar{background:#f04c52}#happyBar{background:#ffbd25}
+
+#energyBar{background:#43d15f}#cleanBar{background:#35baf2}
+
+.tip{background:linear-gradient(110deg,#ffd34c,#ffad1f);color:#352409;
+
+border-radius:13px;padding:16px;font-weight:bold;line-height:1.5}
+
+#message{font-weight:bold;color:#ffda57;min-height:22px}
+
+.shop{display:flex;gap:8px;flex-wrap:wrap}
+
+.shop button{background:#243f80;border:1px solid #5175c4;flex:1}
+
+footer{text-align:center;color:#a9bce5;font-size:13px;padding:16px}
+
+@media(max-width:720px){body{padding:9px}.layout{grid-template-columns:1fr}
+
+.stats{grid-template-columns:repeat(2,1fr)}.scene{min-height:360px}
+
+.status-row{grid-template-columns:32px 76px 1fr 40px}}
+
+</style>
+
+</head>
+
+<body>
+
+<main class="app">
+
+<header>
+
+  <h1> VIRTUAL <span>PET</span></h1>
+
+  <button id="newPet" style="background:#244c91">NEW GAME ↻</button>
+
+</header>
+
+
+
+<section class="stats">
+
+  <div class="stat"><div class="emoji"></div><small>HUNGER</small><strong id="hungerValue">80%</strong></div>
+
+  <div class="stat"><div class="emoji"></div><small>HAPPINESS</small><strong id="happyValue">80%</strong></div>
+
+  <div class="stat"><div class="emoji"></div><small>ENERGY</small><strong id="energyValue">80%</strong></div>
+
+  <div class="stat"><div class="emoji"></div><small>COINS</small><strong id="coinsValue">125</strong></div>
+
+</section>
+
+
+
+<section class="layout">
+
+  <div class="scene">
+
+    <div class="name"> <span id="petName">BUDDY</span></div>
+
+    <div class="age">AGE: <span id="ageValue">1</span></div>
+
+    <div class="window"></div><div class="clock"></div>
+
+    <div class="plant"></div><div class="shelf"></div>
+
+    <div class="picture"></div><div class="rug"></div>
+
+    <div class="pet" id="pet" title="Pet Buddy"></div>
+
+  </div>
+
+
+
+  <div class="right">
+
+    <section class="panel">
+
+      <h2> TAKE CARE OF BUDDY</h2>
+
+      <div class="action-grid">
+
+        <button class="action feed" id="feed"><span></span>FEED</button>
+
+        <button class="action play" id="play"><span></span>PLAY</button>
+
+        <button class="action sleep" id="sleep"><span></span>SLEEP</button>
+
+        <button class="action bath" id="bath"><span></span>BATH</button>
+
+      </div>
+
+    </section>
+
+
+
+    <section class="panel">
+
+      <h2> PET STATUS</h2>
+
+      <div class="status">
+
+        <div class="status-row"><span class="icon"></span><span>HUNGER</span><div class="bar"><div id="hungerBar" class="fill"></div></div><span id="hungerPct">80%</span></div>
+
+        <div class="status-row"><span class="icon"></span><span>HAPPINESS</span><div class="bar"><div id="happyBar" class="fill"></div></div><span id="happyPct">80%</span></div>
+
+        <div class="status-row"><span class="icon"></span><span>ENERGY</span><div class="bar"><div id="energyBar" class="fill"></div></div><span id="energyPct">80%</span></div>
+
+        <div class="status-row"><span class="icon"></span><span>CLEANLINESS</span><div class="bar"><div id="cleanBar" class="fill"></div></div><span id="cleanPct">80%</span></div>
+
+      </div>
+
+    </section>
+
+
+
+    <section class="panel">
+
+      <h2> PET SHOP</h2>
+
+      <div class="shop">
+
+        <button id="buyFood"> Food · 10</button>
+
+        <button id="buyToy"> Toy · 20</button>
+
+      </div>
+
+    </section>
+
+
+
+    <section class="panel">
+
+      <h2> BUDDY SAYS</h2>
+
+      <div id="message">I'm happy you're here! </div>
+
+    </section>
+
+
+
+    <div class="tip"> Take good care of Buddy!<br>
+
+    A happy pet is a healthy pet.</div>
+
+  </div>
+
+</section>
+
+<footer>VIRTUAL PET SIMULATOR · Care, play and grow together</footer>
+
+</main>
+
+
+
+<script>
+
+const $ = id => document.getElementById(id);
+
+const initial = () => ({
+
+  hunger:80,happiness:80,energy:80,clean:80,coins:125,age:1,
+
+  food:2,toys:1,sleeping:false
+
+});
+
+let pet = initial();
+
+let lastAge = Date.now();
+
+let lastDecay = Date.now();
+
+
+
+function clamp(v){return Math.max(0,Math.min(100,v))}
+
+function say(message){$("message").textContent=message}
+
+function update(){
+
+  for(const key of ["hunger","happiness","energy","clean"]){
+    const idKey=key==="happiness"?"happy":key;
+
+    $(idKey+"Value") && ($(idKey+"Value").textContent=pet[key]+"%");
+
+    $(idKey+"Pct").textContent=pet[key]+"%";
+
+    $(idKey+"Bar").style.width=pet[key]+"%";
+
+  }
+
+  $("coinsValue").textContent=pet.coins;
+
+  $("ageValue").textContent=pet.age;
+
+  $("pet").classList.toggle("sleeping",pet.sleeping);
+
+  $("pet").classList.toggle("happy",pet.happiness>=90&&!pet.sleeping);
+
+  $("pet").textContent=pet.sleeping?"":
+
+    pet.happiness<20?"":pet.hunger<20?"":
+
+    pet.happiness>=90?"":"";
+
+}
+
+function action(name){
+
+  if(pet.sleeping&&name!=="sleep"){
+
+    pet.sleeping=false;
+
+    say("Buddy woke up! What shall we do?");
+
+  }
+
+  if(name==="feed"){
+
+    if(pet.food<=0){say("You're out of food! Buy some from the shop.");return}
+
+    pet.food--;pet.hunger=clamp(pet.hunger+25);
+
+    pet.happiness=clamp(pet.happiness+5);
+
+    pet.coins+=2;say("Yummy! Buddy loved that meal. +2 coins ");
+
+  }
+
+  if(name==="play"){
+
+    if(pet.energy<15){say("Buddy is tired. Let them sleep first.");return}
+
+    pet.happiness=clamp(pet.happiness+18);
+
+    pet.energy=clamp(pet.energy-15);
+
+    pet.hunger=clamp(pet.hunger-8);
+
+    pet.coins+=5;say("That was fun! Buddy earned 5 coins! ");
+
+  }
+
+  if(name==="sleep"){
+
+    pet.sleeping=!pet.sleeping;
+
+    if(pet.sleeping){say("Zzz... Buddy is resting. Click SLEEP to wake up.");}
+
+    else{pet.energy=clamp(pet.energy+30);say("Good morning, Buddy! ");}
+
+  }
+
+  if(name==="bath"){
+
+    pet.clean=clamp(pet.clean+35);
+
+    pet.happiness=clamp(pet.happiness+5);
+
+    say("Fresh and clean! Buddy smells wonderful. ");
+
+  }
+
+  update();
+
+}
+
+$("feed").onclick=()=>action("feed");
+
+$("play").onclick=()=>action("play");
+
+$("sleep").onclick=()=>action("sleep");
+
+$("bath").onclick=()=>action("bath");
+
+$("pet").onclick=()=>{
+
+  pet.happiness=clamp(pet.happiness+3);
+
+  say("Buddy loves being petted! ");update();
+
+};
+
+$("buyFood").onclick=()=>{
+
+  if(pet.coins>=10){pet.coins-=10;pet.food+=3;say("Bought 3 meals for Buddy! ");}
+
+  else say("Not enough coins for food!");
+
+  update();
+
+};
+
+$("buyToy").onclick=()=>{
+
+  if(pet.coins>=20){pet.coins-=20;pet.toys++;pet.happiness=clamp(pet.happiness+5);say("New toy unlocked! ");}
+
+  else say("Play games to earn more coins!");
+
+  update();
+
+};
+
+$("newPet").onclick=()=>{
+
+  if(confirm("Start a new game? Your current pet progress will reset.")){
+
+    pet=initial();lastAge=Date.now();lastDecay=Date.now();
+
+    say("Meet Buddy! Take good care of your new friend.");update();
+
+  }
+
+};
+
+setInterval(()=>{
+
+  const now=Date.now();
+
+  if(now-lastDecay>=12000){
+
+    lastDecay=now;
+
+    if(pet.sleeping){
+
+      pet.energy=clamp(pet.energy+8);
+
+      pet.hunger=clamp(pet.hunger-2);
+
+    }else{
+
+      pet.hunger=clamp(pet.hunger-2);
+
+      pet.happiness=clamp(pet.happiness-1);
+
+      pet.energy=clamp(pet.energy-1);
+
+      pet.clean=clamp(pet.clean-1);
+
+    }
+
+    update();
+
+  }
+
+  if(now-lastAge>=60000){
+
+    lastAge=now;pet.age++;say("Happy birthday, Buddy! ");update();
+
+  }
+
+},1000);
+
+update();
+
+</script>
+
+</body>
+
+</html>

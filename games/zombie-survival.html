@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Zombie Survival</title>
+
+<style>
+
+*{box-sizing:border-box}
+
+body{margin:0;background:#07111c;color:#f8fafc;font-family:Arial,sans-serif}
+
+.app{max-width:1000px;margin:auto;padding:18px}
+
+header{display:flex;justify-content:space-between;align-items:center;gap:12px;
+
+padding:18px;background:#101f30;border:1px solid #29445b;border-radius:14px}
+
+h1{margin:0;font-size:clamp(22px,4vw,34px)}
+
+h1 span{color:#facc15}
+
+button{border:0;border-radius:8px;padding:11px 16px;font-weight:bold;
+
+background:#eab308;color:#111827;cursor:pointer}
+
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0}
+
+.stat{background:#102239;border:1px solid #294b68;border-radius:10px;
+
+padding:13px;text-align:center}
+
+.stat small{display:block;color:#9db5cd;font-weight:bold}
+
+.stat strong{display:block;font-size:25px;margin-top:5px}
+
+#health{color:#fb7185}#score{color:#facc15}#ammo{color:#60a5fa}
+
+.arena{position:relative;height:min(65vh,520px);min-height:350px;overflow:hidden;
+
+border:3px solid #294b68;border-radius:14px;
+
+background-color:#182b32;
+
+background-image:linear-gradient(#ffffff0b 1px,transparent 1px),
+
+linear-gradient(90deg,#ffffff0b 1px,transparent 1px);
+
+background-size:40px 40px;cursor:crosshair}
+
+.entity{position:absolute;transform:translate(-50%,-50%);user-select:none}
+
+.player{width:28px;height:28px;background:#38bdf8;border:3px solid white;
+
+border-radius:50%;box-shadow:0 0 15px #38bdf8}
+
+.zombie{width:27px;height:27px;background:#65a30d;border:3px solid #bef264;
+
+border-radius:8px;box-shadow:0 0 9px #65a30d}
+
+.bullet{width:8px;height:8px;border-radius:50%;background:#fde047;
+
+box-shadow:0 0 8px #fde047}
+
+.controls{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+
+.panel{padding:15px;background:#102239;border:1px solid #294b68;border-radius:12px}
+
+.panel h3{margin:0 0 10px;color:#facc15}
+
+.panel p{line-height:1.5;color:#dbeafe;margin:5px 0}
+
+#message{font-weight:bold;color:#facc15}
+
+@media(max-width:560px){.stats{grid-template-columns:repeat(2,1fr)}
+
+.controls{grid-template-columns:1fr}.app{padding:8px}}
+
+</style>
+
+</head>
+
+<body>
+
+<main class="app">
+
+<header>
+
+  <h1> ZOMBIE <span>SURVIVAL</span></h1>
+
+  <button id="restart">RESTART</button>
+
+</header>
+
+
+
+<section class="stats">
+
+  <div class="stat"><small> HEALTH</small><strong id="health">100</strong></div>
+
+  <div class="stat"><small> SCORE</small><strong id="score">0</strong></div>
+
+  <div class="stat"><small> AMMO</small><strong id="ammo">30</strong></div>
+
+  <div class="stat"><small> WAVE</small><strong id="wave">1</strong></div>
+
+</section>
+
+
+
+<div class="arena" id="arena">
+
+  <div class="entity player" id="player"></div>
+
+</div>
+
+
+
+<section class="controls">
+
+  <div class="panel">
+
+    <h3>HOW TO PLAY</h3>
+
+    <p>W A S D or arrow keys — move</p>
+
+    <p>Move your mouse — aim</p>
+
+    <p>Click — shoot zombies</p>
+
+    <p>R — reload ammunition</p>
+
+  </div>
+
+  <div class="panel">
+
+    <h3>MISSION STATUS</h3>
+
+    <p id="message">Survive the zombie waves!</p>
+
+    <p>Eliminate zombies and keep moving to avoid being surrounded.</p>
+
+  </div>
+
+</section>
+
+</main>
+
+<script>
+
+const arena=document.getElementById("arena");
+
+const playerEl=document.getElementById("player");
+
+const healthEl=document.getElementById("health");
+
+const scoreEl=document.getElementById("score");
+
+const ammoEl=document.getElementById("ammo");
+
+const waveEl=document.getElementById("wave");
+
+const messageEl=document.getElementById("message");
+
+
+
+let player,zombies,bullets,keys,health,score,ammo,wave,gameOver;
+
+let lastSpawn=0,lastShot=0,lastDamage=0;
+
+let mouse={x:500,y:250};
+
+const rand=(a,b)=>Math.random()*(b-a)+a;
+
+
+
+function reset(){
+
+  arena.querySelectorAll(".zombie,.bullet").forEach(e=>e.remove());
+
+  player={x:arena.clientWidth/2,y:arena.clientHeight/2};
+
+  zombies=[];bullets=[];keys={};health=100;score=0;ammo=30;
+
+  wave=1;gameOver=false;lastSpawn=0;lastShot=0;lastDamage=0;
+
+  playerEl.style.left=player.x+"px";playerEl.style.top=player.y+"px";
+
+  messageEl.textContent="Survive the zombie waves!";
+
+  updateStats();
+
+}
+
+function updateStats(){
+
+  healthEl.textContent=health;scoreEl.textContent=score;
+
+  ammoEl.textContent=ammo;waveEl.textContent=wave;
+
+}
+
+function spawnZombie(){
+
+  const side=Math.floor(Math.random()*4);
+
+  let x=side===0?0:side===1?arena.clientWidth:
+
+        rand(0,arena.clientWidth);
+
+  let y=side===2?0:side===3?arena.clientHeight:
+
+        rand(0,arena.clientHeight);
+
+  const el=document.createElement("div");
+
+  el.className="entity zombie";
+
+  arena.appendChild(el);
+
+  zombies.push({x,y,el,hp:1,speed:rand(24,42)+wave*2});
+
+}
+
+function shoot(){
+
+  if(gameOver||ammo<=0)return;
+
+  const now=performance.now();
+
+  if(now-lastShot<220)return;
+
+  lastShot=now;ammo--;updateStats();
+
+  const dx=mouse.x-player.x,dy=mouse.y-player.y;
+
+  const len=Math.hypot(dx,dy)||1;
+
+  const el=document.createElement("div");
+
+  el.className="entity bullet";
+
+  arena.appendChild(el);
+
+  bullets.push({x:player.x,y:player.y,
+
+    vx:dx/len*480,vy:dy/len*480,el,life:1.2});
+
+}
+
+function endGame(){
+
+  gameOver=true;
+
+  messageEl.textContent="GAME OVER — press RESTART to play again.";
+
+}
+
+arena.addEventListener("mousemove",e=>{
+
+  const r=arena.getBoundingClientRect();
+
+  mouse={x:e.clientX-r.left,y:e.clientY-r.top};
+
+});
+
+arena.addEventListener("click",shoot);
+
+document.addEventListener("keydown",e=>{
+
+  keys[e.key.toLowerCase()]=true;
+
+  if(["arrowup","arrowdown","arrowleft","arrowright"," "].includes(e.key.toLowerCase()))
+
+    e.preventDefault();
+
+  if(e.key.toLowerCase()==="r"&&!gameOver){ammo=30;updateStats();}
+
+});
+
+document.addEventListener("keyup",e=>keys[e.key.toLowerCase()]=false);
+
+document.getElementById("restart").addEventListener("click",reset);
+
+
+
+let previous=performance.now();
+
+function frame(now){
+
+  const dt=Math.min((now-previous)/1000,.04);
+
+  previous=now;
+
+  if(!gameOver){
+
+    const speed=210;
+
+    let dx=0,dy=0;
+
+    if(keys.w||keys.arrowup)dy--;
+
+    if(keys.s||keys.arrowdown)dy++;
+
+    if(keys.a||keys.arrowleft)dx--;
+
+    if(keys.d||keys.arrowright)dx++;
+
+    const len=Math.hypot(dx,dy)||1;
+
+    player.x=Math.max(14,Math.min(arena.clientWidth-14,
+
+      player.x+dx/len*speed*dt));
+
+    player.y=Math.max(14,Math.min(arena.clientHeight-14,
+
+      player.y+dy/len*speed*dt));
+
+    playerEl.style.left=player.x+"px";
+
+    playerEl.style.top=player.y+"px";
+
+
+
+    if(now-lastSpawn>Math.max(400,1400-wave*80)){
+
+      spawnZombie();lastSpawn=now;
+
+      if(score>0&&score%100===0)wave=Math.floor(score/100)+1;
+
+    }
+
+    zombies.forEach(z=>{
+
+      const dx=player.x-z.x,dy=player.y-z.y;
+
+      const len=Math.hypot(dx,dy)||1;
+
+      z.x+=dx/len*z.speed*dt;z.y+=dy/len*z.speed*dt;
+
+      z.el.style.left=z.x+"px";z.el.style.top=z.y+"px";
+
+      if(len<28&&now-lastDamage>500){
+
+        health=Math.max(0,health-8);lastDamage=now;
+
+        if(health===0)endGame();
+
+      }
+
+    });
+
+    bullets.forEach(b=>{
+
+      b.x+=b.vx*dt;b.y+=b.vy*dt;b.life-=dt;
+
+      b.el.style.left=b.x+"px";b.el.style.top=b.y+"px";
+
+    });
+
+    bullets=bullets.filter(b=>{
+
+      let hit=false;
+
+      for(let i=zombies.length-1;i>=0;i--){
+
+        const z=zombies[i];
+
+        if(Math.hypot(z.x-b.x,z.y-b.y)<22){
+
+          z.el.remove();zombies.splice(i,1);
+
+          score+=10;hit=true;break;
+
+        }
+
+      }
+
+      if(hit||b.life<=0||b.x<0||b.y<0||
+
+        b.x>arena.clientWidth||b.y>arena.clientHeight)b.el.remove();
+
+      return !hit&&b.life>0&&b.x>=0&&b.y>=0&&
+
+        b.x<=arena.clientWidth&&b.y<=arena.clientHeight;
+
+    });
+
+    updateStats();
+
+  }
+
+  requestAnimationFrame(frame);
+
+}
+
+reset();
+
+requestAnimationFrame(frame);
+
+</script>
+
+<script src="touch-zombie.js"></script>
+</body>
+
+</html>

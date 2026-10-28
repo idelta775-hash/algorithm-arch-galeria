@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Cybersecurity Monitoring</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+
+*{box-sizing:border-box}
+
+body{margin:0;background:#071326;color:#f4f7ff;
+
+font-family:Arial;padding:20px}
+
+header{display:flex;justify-content:space-between;
+
+align-items:center;border-bottom:1px solid #29405e}
+
+h1{font-size:24px}
+
+.online{color:#36e56d}
+
+.grid{display:grid;grid-template-columns:repeat(4,1fr);
+
+gap:12px;margin:20px 0}
+
+.card,.panel{background:#0c1c32;border:1px solid #29405e;
+
+border-radius:12px;padding:16px}
+
+.metric{font-size:30px;font-weight:bold;margin:12px 0}
+
+.green{color:#36e56d}
+
+.panel{margin-bottom:15px}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+
+table{width:100%;border-collapse:collapse}
+
+td,th{text-align:left;padding:10px;border-bottom:1px solid #263b55}
+
+@media(max-width:700px){
+
+.grid{grid-template-columns:repeat(2,1fr)}
+
+.two{grid-template-columns:1fr}
+
+body{padding:10px}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+
+
+<header>
+
+<h1> Cybersecurity Monitoring</h1>
+
+<span class="online">● Online</span>
+
+</header>
+
+
+
+<section class="grid">
+
+<div class="card"> Total Alerts
+
+<div class="metric">1,248</div>
+
+<span class="green">▲ 23%</span><br>vs last 24h
+
+</div>
+
+<div class="card"> Critical
+
+<div class="metric">47</div>
+
+<span class="green">▲ 15%</span><br>vs last 24h
+
+</div>
+
+<div class="card"> High
+
+<div class="metric">186</div>
+
+<span class="green">▲ 18%</span><br>vs last 24h
+
+</div>
+
+<div class="card"> Systems at Risk
+
+<div class="metric">32</div>
+
+<span class="green">▲ 12%</span><br>vs last 24h
+
+</div>
+
+</section>
+
+
+
+<section class="panel">
+
+<h3>Alerts Over Time</h3>
+
+<canvas id="trend"></canvas>
+
+</section>
+
+
+
+<div class="two">
+
+<section class="panel">
+
+<h3>Alerts by Severity</h3>
+
+<canvas id="severity"></canvas>
+
+</section>
+
+<section class="panel">
+
+<h3>Top Attack Types</h3>
+
+<canvas id="attacks"></canvas>
+
+</section>
+
+</div>
+
+
+
+<section class="panel">
+
+<h3>Recent Critical Alerts</h3>
+
+<table>
+
+<tr><th>Time</th><th>Alert</th><th>Source IP</th><th>System</th></tr>
+
+<tr><td>10:24</td><td>Brute Force Login</td><td>203.0.113.45</td><td>Web Server 3</td></tr>
+
+<tr><td>09:58</td><td>Malware Detected</td><td>198.51.100.77</td><td>Endpoint 12</td></tr>
+
+<tr><td>09:31</td><td>SQL Injection Attempt</td><td>203.0.113.12</td><td>Web App 1</td></tr>
+
+<tr><td>09:12</td><td>Unauthorized Access</td><td>192.0.2.55</td><td>Database 2</td></tr>
+
+<tr><td>08:45</td><td>Suspicious Activity</td><td>198.51.100.23</td><td>File Server</td></tr>
+
+</table>
+
+</section>
+
+
+
+<script>
+
+new Chart(document.getElementById('trend'),{
+
+type:'line',
+
+data:{
+
+labels:['May 19','May 20','May 21','May 22','May 23','May 24','May 25'],
+
+datasets:[{
+
+label:'Alerts',
+
+data:[45,110,82,215,135,190,365],
+
+borderColor:'#3195ff',
+
+backgroundColor:'#1676df44',
+
+fill:true,
+
+tension:0.35
+
+}]
+
+},
+
+options:{
+
+plugins:{legend:{display:false}},
+
+scales:{
+
+x:{ticks:{color:'white'},grid:{color:'#1b304a'}},
+
+y:{ticks:{color:'white'},grid:{color:'#1b304a'}}
+
+}
+
+}
+
+});
+
+
+
+new Chart(document.getElementById('severity'),{
+
+type:'doughnut',
+
+data:{
+
+labels:['Critical','High','Medium','Low'],
+
+datasets:[{
+
+data:[47,186,478,537],
+
+backgroundColor:['#f43f4f','#ff8b1f','#f5cf27','#24c55e']
+
+}]
+
+},
+
+options:{plugins:{legend:{labels:{color:'white'}}}}
+
+});
+
+
+
+new Chart(document.getElementById('attacks'),{
+
+type:'bar',
+
+data:{
+
+labels:['Brute Force','Malware','SQL Injection','Phishing','DDoS'],
+
+datasets:[{
+
+data:[320,280,195,160,120],
+
+backgroundColor:['#f43f4f','#ff8b1f','#f5cf27','#24c55e','#398bff']
+
+}]
+
+},
+
+options:{
+
+indexAxis:'y',
+
+plugins:{legend:{display:false}},
+
+scales:{
+
+x:{ticks:{color:'white'},grid:{color:'#1b304a'}},
+
+y:{ticks:{color:'white'},grid:{color:'#1b304a'}}
+
+}
+
+}
+
+});
+
+</script>
+
+</body>
+
+</html>

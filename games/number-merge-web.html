@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>Number Merge Puzzle</title>
+
+<style>
+
+:root{--navy:#071329;--panel:#0c2040;--blue:#1266cb;--gold:#ffc928}
+
+*{box-sizing:border-box}
+
+body{margin:0;background:linear-gradient(135deg,#061126,#0e2a54);
+
+font-family:Arial,sans-serif;color:white;padding:16px}
+
+.app{max-width:900px;margin:auto}
+
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;
+
+padding:16px;background:#09172d;border:1px solid #29496f;border-radius:15px}
+
+h1{font-size:clamp(21px,4vw,34px);margin:0}
+
+h1 span{color:var(--gold)}
+
+button{cursor:pointer;font-weight:bold;color:white;border:1px solid #3573b7;
+
+background:linear-gradient(#176cc7,#0b3d85);border-radius:10px;
+
+padding:12px 15px;box-shadow:0 4px 0 #041126}
+
+button:hover{filter:brightness(1.2)}
+
+button:active{transform:translateY(2px);box-shadow:none}
+
+.scores{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0}
+
+.scorebox{padding:13px;text-align:center;background:#0b1c36;
+
+border:1px solid #304d72;border-radius:12px}
+
+.scorebox small{display:block;color:#b8cbe2;font-weight:bold;letter-spacing:1px}
+
+.scorebox strong{display:block;color:var(--gold);font-size:30px;margin-top:4px}
+
+.actions{display:flex;gap:9px;justify-content:flex-end;margin-bottom:12px}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:14px;align-items:start}
+
+.board-wrap{padding:12px;background:#07152b;border:2px solid #28496d;
+
+border-radius:17px;box-shadow:0 10px 25px #0005}
+
+.board{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+
+.tile{aspect-ratio:1;display:flex;align-items:center;justify-content:center;
+
+border-radius:10px;background:#172a45;color:#d8e5f5;
+
+font-size:clamp(22px,5vw,42px);font-weight:900;
+
+box-shadow:inset 0 0 0 1px #ffffff18;transition:background .12s}
+
+.tile[data-v="2"],.tile[data-v="4"]{background:#ffe7b5;color:#263343}
+
+.tile[data-v="8"]{background:#ffac3b;color:white}
+
+.tile[data-v="16"]{background:#f35b43;color:white}
+
+.tile[data-v="32"]{background:#e83c37;color:white}
+
+.tile[data-v="64"]{background:#773bc3;color:white}
+
+.tile[data-v="128"]{background:#f5bd25;color:#17243a}
+
+.tile[data-v="256"]{background:#36a64b;color:white}
+
+.tile[data-v="512"]{background:#18a8ad;color:white}
+
+.tile[data-v="1024"]{background:#267be4;color:white}
+
+.tile[data-v="2048"]{background:#ffdf42;color:#17243a}
+
+.tile.high{background:#293fbd;color:white}
+
+.side{display:flex;flex-direction:column;gap:12px}
+
+.panel{background:#0b1d39;border:1px solid #2c4c71;
+
+border-radius:13px;padding:14px}
+
+.panel h2{font-size:17px;margin:0 0 12px;color:#e9f2ff}
+
+.next{display:flex;gap:7px;justify-content:center}
+
+.next-tile{width:48px;height:48px;border-radius:8px;
+
+display:grid;place-items:center;font-weight:bold;font-size:22px;
+
+background:#ffe7b5;color:#253246}
+
+.next-tile:nth-child(2){background:#ffac3b;color:white}
+
+.next-tile:nth-child(3){background:#f35b43;color:white}
+
+.help{font-size:14px;line-height:1.6;color:#d4e3f7}
+
+.help b{color:var(--gold)}
+
+.keys{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+
+.keys button{padding:9px;font-size:19px}
+
+.keys .up{grid-column:2}
+
+.message{margin-top:12px;padding:12px;text-align:center;
+
+border-radius:10px;background:#102a50;color:#ffda54;font-weight:bold}
+
+.overlay{position:fixed;inset:0;background:#030916cc;display:none;
+
+align-items:center;justify-content:center;padding:20px;z-index:5}
+
+.dialog{background:#10274b;border:1px solid #4675a8;border-radius:18px;
+
+padding:28px;text-align:center;max-width:350px;width:100%;box-shadow:0 20px 70px #0009}
+
+.dialog h2{font-size:30px;margin:0 0 10px}
+
+.dialog p{color:#cbdaf0;line-height:1.5}
+
+@media(max-width:650px){
+
+body{padding:8px}.layout{grid-template-columns:1fr}
+
+.side{display:grid;grid-template-columns:1fr 1fr}
+
+.tile{font-size:clamp(20px,7vw,38px)}
+
+}
+
+@media(max-width:420px){.side{grid-template-columns:1fr}.board{gap:5px}
+
+.board-wrap{padding:7px}.tile{border-radius:6px}}
+
+</style>
+
+</head>
+
+<body>
+
+<main class="app">
+
+<header>
+
+  <h1>NUMBER <span>MERGE</span> PUZZLE</h1>
+
+  <button id="newGame">NEW GAME ↻</button>
+
+</header>
+
+
+
+<section class="scores">
+
+  <div class="scorebox"><small> SCORE</small><strong id="score">0</strong></div>
+
+  <div class="scorebox"><small> BEST</small><strong id="best">0</strong></div>
+
+</section>
+
+
+
+<div class="actions">
+
+  <button id="undo">↶ UNDO</button>
+
+  <button id="pause">Ⅱ PAUSE</button>
+
+</div>
+
+
+
+<section class="layout">
+
+  <div>
+
+    <div class="board-wrap"><div id="board" class="board"></div></div>
+
+    <div id="message" class="message">Merge matching numbers to reach 2048!</div>
+
+  </div>
+
+
+
+  <aside class="side">
+
+    <section class="panel">
+
+      <h2> NEXT TILES</h2>
+
+      <div class="next">
+
+        <div class="next-tile" id="next1">2</div>
+
+        <div class="next-tile" id="next2">4</div>
+
+        <div class="next-tile" id="next3">2</div>
+
+      </div>
+
+    </section>
+
+
+
+    <section class="panel">
+
+      <h2> CONTROLS</h2>
+
+      <div class="keys">
+
+        <button class="up" data-dir="up">↑</button>
+
+        <button data-dir="left">←</button>
+
+        <button data-dir="down">↓</button>
+
+        <button data-dir="right">→</button>
+
+      </div>
+
+      <p class="help">Keyboard: use your <b>arrow keys</b> or W, A, S, D to move tiles.</p>
+
+    </section>
+
+
+
+    <section class="panel">
+
+      <h2> HOW TO PLAY</h2>
+
+      <p class="help">Move the tiles. Matching numbers combine into a larger tile. Each successful move adds a new tile.</p>
+
+      <p class="help"><b>Goal:</b> reach 2048 or keep playing to beat your high score.</p>
+
+    </section>
+
+  </aside>
+
+</section>
+
+</main>
+
+
+
+<div id="overlay" class="overlay">
+
+  <div class="dialog">
+
+    <h2 id="dialogTitle">PAUSED</h2>
+
+    <p id="dialogText">Take a break. Your board is waiting.</p>
+
+    <button id="resume">CONTINUE</button>
+
+  </div>
+
+</div>
+
+
+
+<script>
+
+const $=id=>document.getElementById(id);
+
+const SIZE=4;
+
+let grid,score,best,over,paused,won,history,nextTiles;
+
+best=Number(localStorage.getItem("mergeBest")||0);
+
+
+
+function emptyGrid(){
+
+  return Array.from({length:SIZE},()=>Array(SIZE).fill(0));
+
+}
+
+function emptyCells(b=grid){
+
+  const a=[];
+
+  for(let r=0;r<SIZE;r++)
+
+    for(let c=0;c<SIZE;c++)
+
+      if(!b[r][c])a.push([r,c]);
+
+  return a;
+
+}
+
+function addTile(){
+
+  const cells=emptyCells();
+
+  if(!cells.length)return false;
+
+  const [r,c]=cells[Math.floor(Math.random()*cells.length)];
+
+  grid[r][c]=Math.random()<.9?2:4;
+
+  return true;
+
+}
+
+function createNext(){
+
+  nextTiles=Array.from({length:3},()=>Math.random()<.9?2:4);
+
+  renderNext();
+
+}
+
+function renderNext(){
+
+  nextTiles.forEach((n,i)=>$("next"+(i+1)).textContent=n);
+
+}
+
+function render(){
+
+  const board=$("board");
+
+  board.innerHTML="";
+
+  for(let r=0;r<SIZE;r++){
+
+    for(let c=0;c<SIZE;c++){
+
+      const n=grid[r][c];
+
+      const cell=document.createElement("div");
+
+      cell.className="tile";
+
+      cell.textContent=n||"";
+
+      cell.dataset.v=n;
+
+      if(n>2048)cell.classList.add("high");
+
+      if(n>=1024)cell.style.fontSize="clamp(16px,4vw,29px)";
+
+      board.appendChild(cell);
+
+    }
+
+  }
+
+  $("score").textContent=score;
+
+  $("best").textContent=best;
+
+}
+
+function start(){
+
+  grid=emptyGrid();score=0;over=false;paused=false;won=false;history=null;
+
+  $("overlay").style.display="none";
+
+  $("message").textContent="Merge matching numbers to reach 2048!";
+
+  addTile();addTile();createNext();render();
+
+}
+
+function saveHistory(){
+
+  history={grid:grid.map(row=>row.slice()),score};
+
+}
+
+function undo(){
+
+  if(!history){$("message").textContent="No move to undo yet.";return}
+
+  grid=history.grid;score=history.score;history=null;over=false;render();
+
+  $("message").textContent="Previous move restored.";
+
+}
+
+function slideLine(line){
+
+  let a=line.filter(n=>n!==0);
+
+  let gained=0;
+
+  for(let i=0;i<a.length-1;i++){
+
+    if(a[i]===a[i+1]){
+
+      a[i]*=2;gained+=a[i];a.splice(i+1,1);
+
+    }
+
+  }
+
+  while(a.length<SIZE)a.push(0);
+
+  return {line:a,gained};
+
+}
+
+function move(dir){
+
+  if(over||paused)return;
+
+  saveHistory();
+
+  const old=JSON.stringify(grid);
+
+  let gained=0;
+
+
+
+  for(let i=0;i<SIZE;i++){
+
+    let line=[];
+
+    for(let j=0;j<SIZE;j++){
+
+      if(dir==="left")line.push(grid[i][j]);
+
+      if(dir==="right")line.push(grid[i][SIZE-1-j]);
+
+      if(dir==="up")line.push(grid[j][i]);
+
+      if(dir==="down")line.push(grid[SIZE-1-j][i]);
+
+    }
+
+    const result=slideLine(line);
+
+    gained+=result.gained;
+
+    for(let j=0;j<SIZE;j++){
+
+      if(dir==="left")grid[i][j]=result.line[j];
+
+      if(dir==="right")grid[i][SIZE-1-j]=result.line[j];
+
+      if(dir==="up")grid[j][i]=result.line[j];
+
+      if(dir==="down")grid[SIZE-1-j][i]=result.line[j];
+
+    }
+
+  }
+
+
+
+  if(JSON.stringify(grid)===old){history=null;return}
+
+  score+=gained;
+
+  best=Math.max(best,score);
+
+  localStorage.setItem("mergeBest",best);
+
+  addTile();
+
+  createNext();
+
+  render();
+
+
+
+  if(!won&&grid.some(row=>row.some(n=>n>=2048))){
+
+    won=true;
+
+    $("message").textContent=" You reached 2048! Keep playing!";
+
+  }else{
+
+    $("message").textContent=gained?
+
+      "Great merge! You earned "+gained+" points.":"Nice move! Keep going.";
+
+  }
+
+  if(!canMove()){
+
+    over=true;
+
+    $("dialogTitle").textContent="GAME OVER";
+
+    $("dialogText").textContent="Final score: "+score+". Start a new game to try again.";
+
+    $("resume").textContent="NEW GAME";
+
+    $("overlay").style.display="flex";
+
+  }
+
+}
+
+function canMove(){
+
+  if(emptyCells().length)return true;
+
+  for(let r=0;r<SIZE;r++)
+
+    for(let c=0;c<SIZE;c++){
+
+      if(r+1<SIZE&&grid[r][c]===grid[r+1][c])return true;
+
+      if(c+1<SIZE&&grid[r][c]===grid[r][c+1])return true;
+
+    }
+
+  return false;
+
+}
+
+function togglePause(){
+
+  if(over)return;
+
+  paused=!paused;
+
+  $("overlay").style.display=paused?"flex":"none";
+
+  $("dialogTitle").textContent="GAME PAUSED";
+
+  $("dialogText").textContent="Your progress is safe. Continue when ready.";
+
+  $("resume").textContent="CONTINUE";
+
+}
+
+$("newGame").onclick=()=>{
+
+  if(confirm("Start a new game? Your current board will be lost."))start();
+
+};
+
+$("undo").onclick=undo;
+
+$("pause").onclick=togglePause;
+
+$("resume").onclick=()=>{
+
+  if(over){start();return}
+
+  paused=false;$("overlay").style.display="none";
+
+};
+
+document.querySelectorAll("[data-dir]").forEach(b=>{
+
+  b.onclick=()=>move(b.dataset.dir);
+
+});
+
+document.addEventListener("keydown",e=>{
+
+  const keys={
+
+    ArrowLeft:"left",a:"left",ArrowRight:"right",d:"right",
+
+    ArrowUp:"up",w:"up",ArrowDown:"down",s:"down"
+
+  };
+
+  if(keys[e.key]){
+
+    e.preventDefault();move(keys[e.key]);
+
+  }
+
+  if(e.key.toLowerCase()==="p")togglePause();
+
+  if(e.key.toLowerCase()==="u")undo();
+
+});
+
+start();
+
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,23 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b1526"><title>Arcade | Algorithm Arch</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% 0,#183452,#080d1b 70%);color:#eef6ff;font-family:system-ui,Segoe UI,sans-serif}
+header{max-width:1080px;padding:15px 18px;display:flex;justify-content:space-between;align-items:center;margin:auto;gap:14px}
+a{color:#83dfd2;text-decoration:none}header h1{margin:0;font-size:clamp(17px,3vw,26px)}.frame{max-width:990px;margin:8px auto;padding:0 10px}
+canvas{width:100%;height:auto;aspect-ratio:3/2;display:block;background:#0c172a;border:1px solid #405b77;border-radius:15px;touch-action:none;box-shadow:0 17px 55px #0008}
+.bar{display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin:14px 0}
+button{cursor:pointer;background:#223952;color:#ebf5ff;border:1px solid #466986;border-radius:12px;font:600 15px system-ui;padding:10px 16px;touch-action:none}
+button:active{background:#117f86}#help{color:#acbed5;font-size:14px;flex:1}
+.controls{display:flex;justify-content:space-between;align-items:end;gap:18px;margin:12px auto;max-width:750px;padding:0 10px}
+.dpad{display:grid;grid-template-columns:repeat(3,63px);grid-template-rows:repeat(2,56px);gap:4px}.dpad button{padding:0;font-size:24px}
+.action{display:flex;flex-direction:column;align-items:center;gap:7px}.action button{height:86px;width:92px;border-radius:50%;background:#1b6577;font-weight:800}
+footer{text-align:center;padding:20px 12px 45px;color:#98b0c4;font-size:13px}
+@media(min-width:1000px){.controls{max-width:990px}.dpad{grid-template-columns:repeat(3,48px);grid-template-rows:repeat(2,45px)}.action button{height:62px;width:80px}}
+</style></head><body>
+<header><a href="../index.html#jogos">← Todos os jogos</a><h1 id="game-title">Algorithm Arch</h1><a href="https://whatsapp.com/channel/0029VbE6CER23n3jpmWBcJ1Y" target="_blank" rel="noopener">Canal original ↗</a></header>
+<main class="frame"><canvas id="game" width="900" height="600" aria-label="Área de jogo"></canvas>
+<div class="bar"><span id="help">Carregando jogo...</span><button id="pause">Pausar</button><button id="restart">Reiniciar ↺</button></div>
+<div class="controls" aria-label="Controles para celular"><div class="dpad"><span></span><button data-key="arrowup" aria-label="Cima">↑</button><span></span><button data-key="arrowleft" aria-label="Esquerda">←</button><button data-key="arrowdown" aria-label="Baixo">↓</button><button data-key="arrowright" aria-label="Direita">→</button></div>
+<div class="action"><button data-key=" " aria-label="Ação">AÇÃO</button><small>Pule, lance ou atire</small></div></div></main>
+<footer>Adaptação web jogável baseada nas publicações do Algorithm Arch. Não é o executável original de C++ ou Python.</footer>
+<script src="arcade-core.js"></script><script src="arcade-scenes-a.js"></script><script src="arcade-scenes-b.js"></script><script src="arcade-scenes-c.js"></script></body></html>

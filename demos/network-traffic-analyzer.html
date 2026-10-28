@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>Network Traffic Analyzer</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+
+*{box-sizing:border-box}
+
+body{margin:0;background:#030e1c;color:white;font-family:Arial;padding:20px}
+
+main{max-width:1100px;margin:auto}
+
+header{display:flex;align-items:center;gap:12px}
+
+.icon{background:#075ce5;padding:14px;border-radius:10px}
+
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+
+.card,.panel{background:#07192b;border:1px solid #1c3852;border-radius:12px;padding:16px;margin:12px 0}
+
+.metric{font-size:27px;margin:12px 0}
+
+.up{color:#28dc83}
+
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+canvas{max-height:280px}
+
+table{width:100%;border-collapse:collapse}
+
+td,th{text-align:left;padding:11px;border-bottom:1px solid #19344c}
+
+.alert{color:#ff6477}
+
+@media(max-width:700px){
+
+.grid{grid-template-columns:repeat(2,1fr)}
+
+.two{grid-template-columns:1fr}
+
+body{padding:10px}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<main>
+
+<header>
+
+<div class="icon"></div>
+
+<h1>Network Traffic Analyzer</h1>
+
+</header>
+
+
+
+<section class="grid">
+
+<div class="card">Total Traffic
+
+<div class="metric">2.45 TB</div><span class="up">+12.5%</span></div>
+
+<div class="card">Packets
+
+<div class="metric">8.62 M</div><span class="up">+8.3%</span></div>
+
+<div class="card">Bandwidth
+
+<div class="metric">156 Mbps</div><span class="up">+15.7%</span></div>
+
+<div class="card">Active Connections
+
+<div class="metric" id="connections">1,248</div><span class="up">+5.1%</span></div>
+
+</section>
+
+
+
+<section class="panel">
+
+<h2>Traffic Overview</h2>
+
+<select id="period">
+
+<option value="24">Last 24 Hours</option>
+
+<option value="12">Last 12 Hours</option>
+
+<option value="6">Last 6 Hours</option>
+
+</select>
+
+<canvas id="traffic"></canvas>
+
+</section>
+
+
+
+<div class="two">
+
+<section class="panel">
+
+<h2>Protocol Distribution</h2>
+
+<canvas id="protocols"></canvas>
+
+</section>
+
+<section class="panel">
+
+<h2>Top Talkers</h2>
+
+<table>
+
+<tr><th>IP Address</th><th>Traffic</th></tr>
+
+<tr><td>192.168.1.10</td><td>324.6 GB</td></tr>
+
+<tr><td>192.168.1.25</td><td>212.4 GB</td></tr>
+
+<tr><td>10.0.0.5</td><td>198.7 GB</td></tr>
+
+<tr><td>192.168.1.8</td><td>156.3 GB</td></tr>
+
+<tr><td>10.0.0.12</td><td>134.8 GB</td></tr>
+
+</table>
+
+</section>
+
+</div>
+
+
+
+<section class="panel">
+
+<h2>Recent Alerts</h2>
+
+<table>
+
+<tr><th>Time</th><th>Severity</th><th>Message</th><th>Source IP</th></tr>
+
+<tr><td>10:42:31</td><td class="alert">High</td><td>Large data transfer detected</td><td>192.168.1.10</td></tr>
+
+<tr><td>10:37:18</td><td>Medium</td><td>Unusual traffic volume</td><td>10.0.0.5</td></tr>
+
+<tr><td>10:31:05</td><td>Low</td><td>New connection established</td><td>192.168.1.25</td></tr>
+
+</table>
+
+</section>
+
+</main>
+
+
+
+<script>
+
+const trafficChart=new Chart(document.getElementById('traffic'),{
+
+type:'line',
+
+data:{
+
+labels:['00:00','02:00','04:00','06:00','08:00','10:00','12:00','14:00','16:00','18:00','20:00','22:00'],
+
+datasets:[{
+
+label:'Traffic (Mbps)',
+
+data:[80,55,35,70,110,95,150,220,165,140,185,165],
+
+borderColor:'#09c7f4',
+
+backgroundColor:'#09c7f433',
+
+fill:true,
+
+tension:.35
+
+}]
+
+},
+
+options:{
+
+responsive:true,
+
+plugins:{legend:{labels:{color:'white'}}},
+
+scales:{
+
+x:{ticks:{color:'#d8e8ff'},grid:{color:'#193047'}},
+
+y:{ticks:{color:'#d8e8ff'},grid:{color:'#193047'}}
+
+}
+
+}
+
+});
+
+
+
+new Chart(document.getElementById('protocols'),{
+
+type:'doughnut',
+
+data:{
+
+labels:['TCP','UDP','ICMP','Others'],
+
+datasets:[{
+
+data:[60.2,24.7,8.4,6.7],
+
+backgroundColor:['#168cff','#22c55e','#7c3aed','#f59e0b']
+
+}]
+
+},
+
+options:{plugins:{legend:{labels:{color:'white'}}}}
+
+});
+
+
+
+document.getElementById('period').addEventListener('change',e=>{
+
+const hours=Number(e.target.value);
+
+const labels=[];
+
+const data=[];
+
+for(let i=hours;i>=0;i--){
+
+labels.push(String(24-i).padStart(2,'0')+':00');
+
+data.push(Math.round(35+Math.random()*190));
+
+}
+
+trafficChart.data.labels=labels;
+
+trafficChart.data.datasets[0].data=data;
+
+trafficChart.update();
+
+});
+
+</script>
+
+</body>
+
+</html>
