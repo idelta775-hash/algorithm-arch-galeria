@@ -2,7 +2,7 @@
 "use strict";
 const canvas=document.getElementById("game"),c=canvas.getContext("2d"),W=900,H=600;
 const mode=new URLSearchParams(location.search).get("game")||document.body.dataset.game||"city-builder";
-const names={"fishing-game":"Fishing Adventure","city-builder":"City Builder","number-merge-sfml":"Number Merge 2048","multiplayer-quiz":"Quiz Multiplayer","2d-racing":"Neon Racer","dungeon-explorer":"Dungeon Explorer","2d-platformer-sfml":"2D Platformer","space-shooter-console":"Space Shooter Console"};
+const names={"fishing-game":"Fishing Adventure","city-builder":"City Builder","number-merge-sfml":"Number Merge 2048","multiplayer-quiz":"Quiz Multiplayer","2d-racing":"Neon Racer","dungeon-explorer":"Dungeon Explorer","2d-platformer-sfml":"2D Platformer","space-shooter-console":"Space Shooter Console","farming-simulator":"Farming Simulator","billiards-simulator":"Billiards Simulator","rhythm-tap":"Rhythm Tap Game","solar-system":"Solar System Simulator","tower-defense":"Tower Defense","chess-game":"Chess Game","block-puzzle":"Block Puzzle"};
 const $=q=>document.querySelector(q); $("#game-title").textContent=names[mode]||"Jogo";
 document.title=(names[mode]||"Arcade")+" | Algorithm Arch";
 const keys=new Set();let scene=null,last=0,paused=false;
