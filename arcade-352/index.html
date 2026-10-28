@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#080e1a">
+<meta name="description" content="352 jogos HTML no Algorithm Arch Arcade. Catálogo pesquisável com categorias, favoritos e player individual.">
+<title>ARCADE Δ | 352 jogos extras — Algorithm Arch</title>
+<style>
+:root{color-scheme:dark;--bg:#080e1a;--box:#14243b;--line:#304961;--cyan:#78e7cf;--muted:#aec4db}
+*{box-sizing:border-box}body{margin:0;color:#f5f8ff;background:radial-gradient(ellipse at 4% -12%,#174e64,transparent 50%),radial-gradient(ellipse at 95% 0,#302d69,transparent 38%),var(--bg);font:15px/1.5 system-ui,Segoe UI,Arial,sans-serif;min-height:100vh}a{color:inherit;text-decoration:none}a:hover{text-decoration:underline}button,input,select{font:inherit}button{cursor:pointer}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}.wrap{max-width:1230px;padding:0 20px;margin:auto}
+header{display:flex;gap:15px;align-items:center;justify-content:space-between;padding:18px 0;border-bottom:1px solid var(--line);flex-wrap:wrap}.brand{font-weight:900;font-size:18px;letter-spacing:-.03em}.brand span{color:var(--cyan)}nav{display:flex;gap:9px;flex-wrap:wrap}nav a{border:1px solid var(--line);background:#182e46;border-radius:9px;padding:8px 12px;font-size:13px}
+.hero{padding:47px 0 25px}.eyebrow{font-size:11px;font-weight:800;letter-spacing:.23em;color:var(--cyan)}h1{font-size:clamp(38px,7vw,75px);line-height:1.05;letter-spacing:-.06em;margin:10px 0}h1 em{color:#a7eacb;font-style:normal}.hero p{font-size:16px;color:#bed0e1;max-width:740px}.metrics{display:flex;flex-wrap:wrap;gap:10px;margin:23px 0 10px}.metric{background:#122d42;border:1px solid #31506b;border-radius:12px;padding:12px 20px;min-width:145px}.metric b{display:block;font-size:24px;line-height:1.2}.metric small{font-size:12px;color:#b8cee2}
+.info{background:#101e30;color:#b2c5da;border:1px solid #324761;border-radius:12px;padding:13px 17px;margin:8px 0 31px;font-size:13px}.info a{color:#9df5d9;text-decoration:underline}.heading{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:17px}.heading h2{font-size:26px;margin:0}.heading small{color:#a2bdd4}
+.controls{display:flex;flex-wrap:wrap;align-items:center;gap:9px}.controls input{flex:1;min-width:185px;background:#102036;color:#fff;border:1px solid #3b5874;padding:12px;border-radius:10px}.controls select,.control{background:#1b3550;color:#f3f9ff;border:1px solid #456a83;padding:11px 13px;border-radius:10px}.control.active,.play{background:linear-gradient(100deg,#60d7ce,#81e9ad);color:#092b30;border:0;font-weight:900}.tabs{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 27px}.tabs button{background:#1c2d45;color:#c4d9e8;border:1px solid #3c566f;padding:9px 13px;border-radius:10px}.tabs button.selected{background:#236c75;border-color:#69e6d0;color:white}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(225px,1fr));gap:16px}.card{background:#15253c;border:1px solid #30465e;border-radius:16px;overflow:hidden;transition:transform .15s}.card:hover{transform:translateY(-3px);border-color:#78b9c1}.cover{display:grid;place-items:center;position:relative;height:132px}.cover span{font-size:53px;filter:drop-shadow(0 10px 15px #0006)}.cover small{position:absolute;left:12px;top:10px;background:#071b2e99;padding:4px 9px;border-radius:9px;font-weight:800}.star{position:absolute;right:10px;top:8px;border:1px solid #ffffff80;border-radius:9px;background:#101c39b9;color:white;font-size:24px;line-height:1;padding:5px 8px}.star.saved{color:#ffe18e}.body{padding:13px}.body h3{font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin:0 0 5px}.body p{font-size:12px;color:var(--muted);margin:0 0 12px}.play{width:100%;padding:10px 12px;border-radius:10px}
+#more{display:block;margin:28px auto 0}footer{border-top:1px solid var(--line);padding:30px 15px;margin-top:45px;text-align:center;font-size:13px;color:var(--muted)}footer a{text-decoration:underline;color:#a5eddd}
+.player{position:fixed;inset:0;z-index:2000;display:none;flex-direction:column;background:#050c19}.player.open{display:flex}.bar{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;padding:10px 15px;background:#14253c;border-bottom:1px solid var(--line)}.bar strong{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.buttons{display:flex;flex-wrap:wrap;gap:7px}.buttons a,.buttons button{border:1px solid #47738a;background:#203955;color:white;border-radius:9px;padding:8px 11px;font-size:13px;font-weight:700}.buttons .exit{background:#296d72}.stage{position:relative;flex:1;min-height:0}.stage iframe{display:none;width:100%;height:100%;border:0;background:white}.stage iframe.ready{display:block}.loader{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:18px;gap:12px;background:#0a162a}.loader.off{display:none}.loader p{color:#b9cede;max-width:520px}.spin{width:45px;height:45px;border:4px solid #3a5673;border-top-color:#78efd4;border-radius:50%;animation:spin 1s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}.progress{width:min(340px,78vw);height:8px;background:#203850;border-radius:10px;overflow:hidden}.progress i{display:block;background:#79e4cd;height:100%;width:0;transition:width .12s}.hidden{display:none!important}
+@media(max-width:640px){.wrap{padding:0 13px}.hero{padding-top:31px}.hero p{font-size:14px}.brand{font-size:15px}.metrics .metric{min-width:100px;flex:1}.heading h2{font-size:21px}.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.cover{height:110px}.cover span{font-size:43px}.body{padding:10px}.body h3{font-size:14px}.bar strong{flex-basis:100%}.buttons a,.buttons button{font-size:12px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header><a class="brand" href="../">⚡ Algorithm <span>Arch Arcade</span></a><nav><a href="../">← 20 jogos originais</a><a href="https://github.com/CoolDude2349/Offline-HTML-Games-Pack" target="_blank" rel="noopener noreferrer">Créditos / fonte ↗</a></nav></header>
+<section class="hero"><div class="eyebrow">BIBLIOTECA ADICIONAL • JOGOS HTML</div><h1>Mais <em>352 jogos</em><br>no seu navegador.</h1><p>Explore jogos de corrida, ação, esportes e clássicos. Cada jogo é baixado individualmente do acervo original quando você toca em Jogar.</p><div class="metrics"><div class="metric"><b id="total">352</b><small>Jogos catalogados</small></div><div class="metric"><b>1 por vez</b><small>Download sob demanda</small></div><div class="metric"><b id="favcount">0</b><small>Favoritos</small></div></div></section>
+<div class="info">Os 352 jogos pertencem ao <a href="https://github.com/CoolDude2349/Offline-HTML-Games-Pack" target="_blank" rel="noopener noreferrer">acervo público original</a> e não são copiados para este site. Alguns arquivos superam 50 MB e podem apresentar incompatibilidade em certos dispositivos. A execução online exige internet; para abrir um jogo já salvo no dispositivo, use “Importar HTML”.</div>
+<section id="biblioteca"><div class="heading"><h2>Escolha seu jogo</h2><small id="result">Carregando catálogo...</small></div><div class="controls"><input id="search" type="search" placeholder="🔎 Buscar por nome..." aria-label="Buscar jogos"><select id="sort" aria-label="Ordenar"><option value="alpha">Nome A–Z</option><option value="light">Menor tamanho</option><option value="heavy">Maior tamanho</option></select><button class="control" id="import">＋ Importar HTML</button></div><div class="tabs" id="tabs"></div><div id="grid" class="grid"></div><button id="more" class="control hidden">Mostrar mais jogos</button></section>
+</div>
+<footer>Algorithm Arch Arcade · Catálogo adicional independente · Créditos aos autores de cada jogo · <a href="../">Voltar à galeria original</a></footer>
+<div id="player" class="player" role="dialog" aria-modal="true" aria-label="Jogo HTML"><div class="bar"><strong id="gameTitle">Jogo</strong><div class="buttons"><a id="source" href="https://github.com/CoolDude2349/Offline-HTML-Games-Pack" target="_blank" rel="noopener noreferrer">Fonte ↗</a><button id="download" disabled>↓ Salvar HTML</button><button id="fullscreen">⛶ Tela cheia</button><button id="exit" class="exit">✕ Fechar</button></div></div><div id="stage" class="stage"><div id="loader" class="loader"><div class="spin" id="spinner"></div><strong id="status">Preparando jogo...</strong><p id="detail">Carregando...</p><div class="progress"><i id="progress"></i></div></div><iframe id="gameFrame" title="Jogo selecionado, executado em ambiente isolado" sandbox="allow-scripts allow-pointer-lock allow-forms allow-modals allow-downloads" allow="fullscreen; autoplay; gamepad" referrerpolicy="no-referrer"></iframe></div></div>
+<input type="file" id="files" accept=".html,.htm,text/html" multiple hidden>
+<script>
+'use strict';
+const REPO='CoolDude2349/Offline-HTML-Games-Pack';
+const RAW='https://raw.githubusercontent.com/'+REPO+'/master/offline/';
+const SOURCE='https://github.com/'+REPO+'/blob/master/offline/';
+const $=id=>document.getElementById(id);
+const cats=['Todos','Favoritos','Clássicos','Corrida','Esportes','Ação','Plataforma','Terror','Puzzle','Outros'];
+const emoji={'Todos':'🎮','Favoritos':'⭐','Clássicos':'🕹️','Corrida':'🏁','Esportes':'⚽','Ação':'⚔️','Plataforma':'🍄','Terror':'👻','Puzzle':'🧩','Outros':'🎲'};
+const patterns={'Corrida':/race|racer|car|drive|drift|moto|bike|kart|traffic|truck|rally|parking/i,'Esportes':/soccer|football|basket|tennis|golf|pool|bowling|boxing|skate|baseball|volley/i,'Ação':/shoot|strike|doom|battle|fight|ninja|zombie|gun|tank|sword|surviv|combat|sniper|war|defense/i,'Plataforma':/mario|sonic|geometry|run|jump|parkour|platform|doodle|celeste|subway|vex/i,'Terror':/fnaf|freddy|granny|horror|scary|poppy|slender|nightmare/i,'Puzzle':/2048|puzzle|wordle|sudoku|merge|tetris|mahjong|minesweeper|chess|block|brain|solitaire|snake|tile/i,'Clássicos':/pacman|pac-man|dino|asteroids|flappy|pong|frogger|agar|retro/i};
+const format=n=>n<1e6?Math.round(n/1000)+' KB':(n/1e6).toFixed(1)+' MB';
+const pretty=s=>s.replace(/\.html?$/i,'').replace(/[_-]+/g,' ').replace(/\s+/g,' ').replace(/\b[a-z]/g,c=>c.toUpperCase());
+const categorize=s=>Object.keys(patterns).find(k=>patterns[k].test(s))||'Outros';
+const safe=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const palette=[['#234775','#254c6e'],['#3e3a80','#236779'],['#125965','#336c5d'],['#734b6e','#30466c'],['#31587b','#2e3376']];
+let games=[],favorites=new Set();
+try{favorites=new Set(JSON.parse(localStorage.getItem('aa352_favorites')||'[]'))}catch(e){}
+const view={cat:'Todos',q:'',sort:'alpha',limit:40,current:null,request:0,ctrl:null,blob:null};
+function saveFavorites(){try{localStorage.setItem('aa352_favorites',JSON.stringify([...favorites]))}catch(e){}$('favcount').textContent=favorites.size}
+function render(){
+$('tabs').innerHTML=cats.map(c=>'<button data-cat="'+c+'" class="'+(view.cat===c?'selected':'')+'">'+emoji[c]+' '+c+'</button>').join('');
+const q=view.q.trim().toLocaleLowerCase('pt-BR');
+const filtered=games.filter(g=>(view.cat==='Todos'||view.cat==='Favoritos'&&favorites.has(g.name)||g.cat===view.cat)&&(!q||g.title.toLocaleLowerCase('pt-BR').includes(q)||g.name.toLowerCase().includes(q)));
+filtered.sort((a,b)=>view.sort==='light'?a.size-b.size:view.sort==='heavy'?b.size-a.size:a.title.localeCompare(b.title,'pt-BR'));
+$('result').textContent=filtered.length+' jogos encontrados · '+games.length+' no catálogo';
+$('total').textContent=games.length;
+$('grid').innerHTML=filtered.slice(0,view.limit).map((g,i)=>{
+const colors=palette[i%palette.length],f=favorites.has(g.name);
+return '<article class="card"><div class="cover" style="background:linear-gradient(130deg,'+colors[0]+','+colors[1]+')"><small>'+safe(g.cat)+'</small><span>'+emoji[g.cat]+'</span><button class="star '+(f?'saved':'')+'" data-favorite="'+safe(g.name)+'" aria-label="'+(f?'Remover dos favoritos':'Adicionar aos favoritos')+'">'+(f?'★':'☆')+'</button></div><div class="body"><h3 title="'+safe(g.title)+'">'+safe(g.title)+'</h3><p>'+format(g.size)+' · '+(g.file?'Arquivo local':'Acervo externo')+'</p><button class="play" data-play="'+safe(g.name)+'">▶ Jogar agora</button></div></article>'}).join('');
+$('more').classList.toggle('hidden',filtered.length<=view.limit);saveFavorites();
+}
+function updateStatus(title,detail,done){$('status').textContent=title;$('detail').textContent=detail;$('spinner').classList.toggle('hidden',!!done)}
+function stop(){view.request++;view.ctrl?.abort();view.ctrl=null;$('gameFrame').src='about:blank';$('gameFrame').classList.remove('ready');$('loader').classList.remove('off');if(view.blob){URL.revokeObjectURL(view.blob);view.blob=null}$('download').disabled=true;view.current=null}
+function close(){stop();$('player').classList.remove('open');document.body.style.overflow=''}
+async function play(g){
+stop();const id=view.request;view.current=g;
+$('gameTitle').textContent=g.title;$('player').classList.add('open');document.body.style.overflow='hidden';$('progress').style.width='0';$('source').href=g.file?'https://github.com/'+REPO:SOURCE+encodeURIComponent(g.name);
+updateStatus('Preparando '+g.title,'Tamanho: '+format(g.size)+' • o download ocorre uma vez por abertura.');
+if(!g.file&&g.size>35e6&&/Android|iPhone|iPad/i.test(navigator.userAgent)&&!confirm('Jogo de '+format(g.size)+'; ele pode exigir muita memória. Continuar?')){close();return}
+view.ctrl=new AbortController();
+try{
+let blob;if(g.file){blob=g.file.slice(0,g.size,'text/html')}else{
+const resp=await fetch(RAW+encodeURIComponent(g.name),{signal:view.ctrl.signal});
+if(!resp.ok)throw new Error('Servidor original: HTTP '+resp.status);
+if(!resp.body){blob=new Blob([await resp.arrayBuffer()],{type:'text/html'})}
+else{
+const parts=[],reader=resp.body.getReader();let loaded=0,total=Number(resp.headers.get('content-length'))||g.size;
+while(true){const v=await reader.read();if(v.done)break;if(view.request!==id){reader.cancel().catch(()=>{});return}parts.push(v.value);loaded+=v.value.length;$('progress').style.width=Math.min(99,Math.round(loaded/total*100))+'%';updateStatus('Baixando '+g.title,format(loaded)+' de '+format(total))}
+blob=new Blob(parts,{type:'text/html'})
+}}
+if(view.request!==id)return;
+view.blob=URL.createObjectURL(blob);$('progress').style.width='100%';updateStatus('Iniciando jogo','Se o jogo não aparecer, use Fonte para consultar o arquivo original.');
+$('gameFrame').onload=()=>{if(view.request===id){$('gameFrame').classList.add('ready');$('loader').classList.add('off')}};
+$('gameFrame').src=view.blob;$('download').disabled=false;
+}catch(err){if(view.request!==id)return;updateStatus('Falha ao iniciar o jogo',String(err.message||err)+'. Tente importar o HTML baixado do repositório.',true)}
+}
+$('grid').onclick=e=>{const f=e.target.closest('[data-favorite]');if(f){favorites.has(f.dataset.favorite)?favorites.delete(f.dataset.favorite):favorites.add(f.dataset.favorite);render();return}const b=e.target.closest('[data-play]');if(b){const g=games.find(x=>x.name===b.dataset.play);if(g)play(g)}};
+$('tabs').onclick=e=>{const b=e.target.closest('[data-cat]');if(!b)return;view.cat=b.dataset.cat;view.limit=40;render()};
+$('search').oninput=e=>{view.q=e.target.value;view.limit=40;render()};
+$('sort').onchange=e=>{view.sort=e.target.value;render()};
+$('more').onclick=()=>{view.limit+=40;render()};
+$('exit').onclick=close;document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('player').classList.contains('open'))close()});
+$('fullscreen').onclick=()=>{if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});else $('stage').requestFullscreen?.().catch(()=>{})};
+$('download').onclick=()=>{if(!view.blob||!view.current)return;const a=document.createElement('a');a.href=view.blob;a.download=view.current.name;document.body.append(a);a.click();a.remove()};
+$('import').onclick=()=>$('files').click();
+$('files').onchange=e=>{for(const file of e.target.files){if(!/\.html?$/i.test(file.name))continue;const g={name:file.name,title:pretty(file.name),size:file.size,cat:categorize(file.name),file};const i=games.findIndex(x=>x.name===file.name);if(i<0)games.push(g);else games[i]=g}e.target.value='';view.cat='Todos';view.q='';$('search').value='';view.limit=40;render()};
+fetch('./catalog.json').then(r=>{if(!r.ok)throw Error('HTTP '+r.status);return r.json()}).then(items=>{if(!Array.isArray(items)||!items.length)throw Error('catálogo vazio');games=items.filter(x=>/\.html?$/i.test(x.n)).map(x=>({name:x.n,title:pretty(x.n),size:x.s,cat:categorize(x.n),file:null}));render()}).catch(err=>{$('result').textContent='Catálogo temporariamente indisponível: '+err.message});
+</script></body></html>
