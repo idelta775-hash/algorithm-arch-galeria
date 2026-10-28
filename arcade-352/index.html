@@ -18,7 +18,7 @@ header{display:flex;gap:15px;align-items:center;justify-content:space-between;pa
 .player{position:fixed;inset:0;z-index:2000;display:none;flex-direction:column;background:#050c19}.player.open{display:flex}.bar{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;padding:10px 15px;background:#14253c;border-bottom:1px solid var(--line)}.bar strong{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.buttons{display:flex;flex-wrap:wrap;gap:7px}.buttons a,.buttons button{border:1px solid #47738a;background:#203955;color:white;border-radius:9px;padding:8px 11px;font-size:13px;font-weight:700}.buttons .exit{background:#296d72}.stage{position:relative;flex:1;min-height:0}.stage iframe{display:none;width:100%;height:100%;border:0;background:white}.stage iframe.ready{display:block}.loader{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:18px;gap:12px;background:#0a162a}.loader.off{display:none}.loader p{color:#b9cede;max-width:520px}.spin{width:45px;height:45px;border:4px solid #3a5673;border-top-color:#78efd4;border-radius:50%;animation:spin 1s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}.progress{width:min(340px,78vw);height:8px;background:#203850;border-radius:10px;overflow:hidden}.progress i{display:block;background:#79e4cd;height:100%;width:0;transition:width .12s}.hidden{display:none!important}
 @media(max-width:640px){.wrap{padding:0 13px}.hero{padding-top:31px}.hero p{font-size:14px}.brand{font-size:15px}.metrics .metric{min-width:100px;flex:1}.heading h2{font-size:21px}.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.cover{height:110px}.cover span{font-size:43px}.body{padding:10px}.body h3{font-size:14px}.bar strong{flex-basis:100%}.buttons a,.buttons button{font-size:12px}}
 </style>
-</head>
+<link rel="stylesheet" href="../delta-brand.css"><link rel="icon" href="../delta-favicon.svg" type="image/svg+xml"></head>
 <body>
 <div class="wrap">
 <header><a class="brand" href="../">⚡ Algorithm <span>Arch Arcade</span></a><nav><a href="../">← 20 jogos originais</a><a href="https://github.com/CoolDude2349/Offline-HTML-Games-Pack" target="_blank" rel="noopener noreferrer">Créditos / fonte ↗</a></nav></header>
@@ -27,7 +27,7 @@ header{display:flex;gap:15px;align-items:center;justify-content:space-between;pa
 <section id="biblioteca"><div class="heading"><h2>Escolha seu jogo</h2><small id="result">Carregando catálogo...</small></div><div class="controls"><input id="search" type="search" placeholder="🔎 Buscar por nome..." aria-label="Buscar jogos"><select id="sort" aria-label="Ordenar"><option value="alpha">Nome A–Z</option><option value="light">Menor tamanho</option><option value="heavy">Maior tamanho</option></select><button class="control" id="import">＋ Importar HTML</button></div><div class="tabs" id="tabs"></div><div id="grid" class="grid"></div><button id="more" class="control hidden">Mostrar mais jogos</button></section>
 </div>
 <footer>Algorithm Arch Arcade · Catálogo adicional independente · Créditos aos autores de cada jogo · <a href="../">Voltar à galeria original</a></footer>
-<div id="player" class="player" role="dialog" aria-modal="true" aria-label="Jogo HTML"><div class="bar"><strong id="gameTitle">Jogo</strong><div class="buttons"><a id="source" href="https://github.com/CoolDude2349/Offline-HTML-Games-Pack" target="_blank" rel="noopener noreferrer">Fonte ↗</a><button id="download" disabled>↓ Salvar HTML</button><button id="fullscreen">⛶ Tela cheia</button><button id="exit" class="exit">✕ Fechar</button></div></div><div id="stage" class="stage"><div id="loader" class="loader"><div class="spin" id="spinner"></div><strong id="status">Preparando jogo...</strong><p id="detail">Carregando...</p><div class="progress"><i id="progress"></i></div></div><iframe id="gameFrame" title="Jogo selecionado, executado em ambiente isolado" sandbox="allow-scripts allow-pointer-lock allow-forms allow-modals allow-downloads" allow="fullscreen; autoplay; gamepad" referrerpolicy="no-referrer"></iframe></div></div>
+<div id="player" class="player" role="dialog" aria-modal="true" aria-label="Jogo HTML"><div class="bar"><strong id="gameTitle">Jogo</strong><div class="buttons"><a id="source" href="https://github.com/CoolDude2349/Offline-HTML-Games-Pack" target="_blank" rel="noopener noreferrer">Fonte ↗</a><button id="download" disabled>↓ Salvar HTML</button><button id="language" title="Tradução assistida de menus e textos; reinicia o jogo">🌐 PT-BR ligado</button><button id="fullscreen">⛶ Tela cheia</button><button id="exit" class="exit">✕ Fechar</button></div></div><div id="stage" class="stage"><div id="loader" class="loader"><div class="spin" id="spinner"></div><strong id="status">Preparando jogo...</strong><p id="detail">Carregando...</p><div class="progress"><i id="progress"></i></div></div><iframe id="gameFrame" title="Jogo selecionado, executado em ambiente isolado" sandbox="allow-scripts allow-pointer-lock allow-forms allow-modals allow-downloads" allow="fullscreen; autoplay; gamepad" referrerpolicy="no-referrer"></iframe></div></div>
 <input type="file" id="files" accept=".html,.htm,text/html" multiple hidden>
 <script>
 'use strict';
@@ -45,7 +45,7 @@ const safe=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;
 const palette=[['#234775','#254c6e'],['#3e3a80','#236779'],['#125965','#336c5d'],['#734b6e','#30466c'],['#31587b','#2e3376']];
 let games=[],favorites=new Set();
 try{favorites=new Set(JSON.parse(localStorage.getItem('aa352_favorites')||'[]'))}catch(e){}
-const view={cat:'Todos',q:'',sort:'alpha',limit:40,current:null,request:0,ctrl:null,blob:null};
+const view={cat:'Todos',q:'',sort:'alpha',limit:40,current:null,request:0,ctrl:null,blob:null,translate:true};
 function saveFavorites(){try{localStorage.setItem('aa352_favorites',JSON.stringify([...favorites]))}catch(e){}$('favcount').textContent=favorites.size}
 function render(){
 $('tabs').innerHTML=cats.map(c=>'<button data-cat="'+c+'" class="'+(view.cat===c?'selected':'')+'">'+emoji[c]+' '+c+'</button>').join('');
@@ -60,6 +60,20 @@ return '<article class="card"><div class="cover" style="background:linear-gradie
 $('more').classList.toggle('hidden',filtered.length<=view.limit);saveFavorites();
 }
 function updateStatus(title,detail,done){$('status').textContent=title;$('detail').textContent=detail;$('spinner').classList.toggle('hidden',!!done)}
+
+async function localizeBlob(original){
+var preface=await original.slice(0,16384).text();
+var match=/<head(?:\s[^>]*)?>/i.exec(preface);
+var position=match?match.index+match[0].length:0;
+var insertHead=false;
+if(!match){match=/<html(?:\s[^>]*)?>/i.exec(preface);if(match){position=match.index+match[0].length;insertHead=true;}}
+var offset=new TextEncoder().encode(preface.substring(0,position)).length;
+var src=new URL('../delta-l10n.js',location.href).href;
+var tag='<scr'+'ipt src="'+src+'"></scr'+'ipt>';
+if(insertHead)tag='<head>'+tag+'</head>';
+return new Blob([original.slice(0,offset),tag,original.slice(offset)],{type:'text/html'});
+}
+
 function stop(){view.request++;view.ctrl?.abort();view.ctrl=null;$('gameFrame').src='about:blank';$('gameFrame').classList.remove('ready');$('loader').classList.remove('off');if(view.blob){URL.revokeObjectURL(view.blob);view.blob=null}$('download').disabled=true;view.current=null}
 function close(){stop();$('player').classList.remove('open');document.body.style.overflow=''}
 async function play(g){
@@ -79,6 +93,7 @@ while(true){const v=await reader.read();if(v.done)break;if(view.request!==id){re
 blob=new Blob(parts,{type:'text/html'})
 }}
 if(view.request!==id)return;
+if(view.translate){blob=await localizeBlob(blob);if(view.request!==id)return;}
 view.blob=URL.createObjectURL(blob);$('progress').style.width='100%';updateStatus('Iniciando jogo','Se o jogo não aparecer, use Fonte para consultar o arquivo original.');
 $('gameFrame').onload=()=>{if(view.request===id){$('gameFrame').classList.add('ready');$('loader').classList.add('off')}};
 $('gameFrame').src=view.blob;$('download').disabled=false;
@@ -90,9 +105,10 @@ $('search').oninput=e=>{view.q=e.target.value;view.limit=40;render()};
 $('sort').onchange=e=>{view.sort=e.target.value;render()};
 $('more').onclick=()=>{view.limit+=40;render()};
 $('exit').onclick=close;document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('player').classList.contains('open'))close()});
+$('language').onclick=()=>{view.translate=!view.translate;$('language').textContent=view.translate?'🌐 PT-BR ligado':'🌐 Original';const current=view.current;if(current)play(current)};
 $('fullscreen').onclick=()=>{if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});else $('stage').requestFullscreen?.().catch(()=>{})};
 $('download').onclick=()=>{if(!view.blob||!view.current)return;const a=document.createElement('a');a.href=view.blob;a.download=view.current.name;document.body.append(a);a.click();a.remove()};
 $('import').onclick=()=>$('files').click();
 $('files').onchange=e=>{for(const file of e.target.files){if(!/\.html?$/i.test(file.name))continue;const g={name:file.name,title:pretty(file.name),size:file.size,cat:categorize(file.name),file};const i=games.findIndex(x=>x.name===file.name);if(i<0)games.push(g);else games[i]=g}e.target.value='';view.cat='Todos';view.q='';$('search').value='';view.limit=40;render()};
 fetch('./catalog.json').then(r=>{if(!r.ok)throw Error('HTTP '+r.status);return r.json()}).then(items=>{if(!Array.isArray(items)||!items.length)throw Error('catálogo vazio');games=items.filter(x=>/\.html?$/i.test(x.n)).map(x=>({name:x.n,title:pretty(x.n),size:x.s,cat:categorize(x.n),file:null}));render()}).catch(err=>{$('result').textContent='Catálogo temporariamente indisponível: '+err.message});
-</script></body></html>
+</script><script src="../delta-site.js" defer></script></body></html>
