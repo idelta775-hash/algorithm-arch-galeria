@@ -4,9 +4,9 @@
 function run(){
 var isCatalog=location.pathname.indexOf("arcade-352")!==-1;
 document.documentElement.lang="pt-BR";
-document.title=isCatalog?"DELTA ARCADE Δ | 352 jogos com tradução PT-BR assistida":"DELTA ARCADE Δ | Galeria Algorithm Arch — 372 jogos";
+document.title=isCatalog?"DELTA ARCADE Δ | 352 jogos com tradução PT-BR assistida":"DELTA ARCADE Δ | Galeria Algorithm Arch — 373 jogos";
 var meta=document.querySelector('meta[name="description"]');
-if(meta)meta.content=isCatalog?"DELTA ARCADE: 352 jogos extras com catálogo, favoritos, categorias e tradução assistida para português brasileiro.":"DELTA ARCADE: 20 jogos Algorithm Arch, 352 jogos extras e 6 demonstrações de aplicativos.";
+if(meta)meta.content=isCatalog?"DELTA ARCADE: 352 jogos extras com catálogo, favoritos, categorias e tradução assistida para português brasileiro.":"DELTA ARCADE: 21 jogos Algorithm Arch/DELTA, 352 jogos extras e 6 demonstrações de aplicativos.";
 var brand=document.querySelector(".brand");
 if(brand){brand.innerHTML='<span class="delta-mark" aria-hidden="true">Δ</span><span class="delta-title">DELTA <strong>ARCADE</strong><small class="delta-byline">Coleção Algorithm Arch</small></span>';brand.setAttribute("aria-label","Delta Arcade — Coleção Algorithm Arch");}
 var hero=document.querySelector(".hero");
@@ -17,7 +17,7 @@ if(!isCatalog){var h=hero.querySelector("h1");if(h)h.innerHTML='Seus jogos. Sua 
 }
 if(!isCatalog){
 var stats=document.querySelector(".stats");
-if(stats&&!document.getElementById("delta372")){var el=document.createElement("div");el.id="delta372";el.className="stat";el.innerHTML="<b>372</b><span>Jogos nas duas bibliotecas</span>";stats.appendChild(el);}
+if(stats&&!document.getElementById("delta373")){var el=document.createElement("div");el.id="delta373";el.className="stat";el.innerHTML="<b>373</b><span>Jogos nas duas bibliotecas</span>";stats.appendChild(el);}
 var mappings={
 "Zombie Survival Game":"Sobrevivência Zumbi",
 "Fishing Game":"Jogo de Pesca",
